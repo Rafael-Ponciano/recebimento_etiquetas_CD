@@ -48,13 +48,18 @@ def salvar_status_manual(
         .upsert(payload, on_conflict="id_any")
         .execute()
     )
-    _invalidar_mapa_cache()
+    if _mapa_cache["dados"] is not None:
+        _mapa_cache["dados"][oid] = status
+    else:
+        _invalidar_mapa_cache()
 
 
 def ler_status_manual(order_id: str) -> str | None:
     oid = _norm_id(order_id)
     if not oid:
         return None
+    if _mapa_cache["dados"] is not None and oid in _mapa_cache["dados"]:
+        return _mapa_cache["dados"][oid]
     client = get_client()
     try:
         resp = executar_com_retry(
@@ -68,7 +73,10 @@ def ler_status_manual(order_id: str) -> str | None:
         return None
     if not resp.data:
         return None
-    return str(resp.data[0].get("status_any") or "").strip() or None
+    val = str(resp.data[0].get("status_any") or "").strip() or None
+    if _mapa_cache["dados"] is not None and val:
+        _mapa_cache["dados"][oid] = val
+    return val
 
 
 def mapa_status_manual() -> dict[str, str]:
@@ -86,14 +94,11 @@ def mapa_status_manual() -> dict[str, str]:
     ):
         return dict(_mapa_cache["dados"])
 
-    from datetime import datetime, timezone, timedelta
     client = get_client()
-    since = (datetime.now(timezone.utc) - timedelta(days=60)).isoformat()
     try:
         resp = executar_com_retry(
             lambda: client.table("pedidos_status_manual")
             .select("id_any,status_any")
-            .gte("atualizado_em", since)
             .limit(5000)
             .execute()
         )

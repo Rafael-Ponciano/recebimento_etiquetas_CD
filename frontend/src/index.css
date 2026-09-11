@@ -182,3 +182,46 @@ input::-webkit-strong-password-auto-fill-button {
     transition-duration: 0.001ms !important;
   }
 }
+
+@media print {
+  body.imprimindo-romaneio-despacho * {
+    visibility: hidden;
+  }
+
+  body.imprimindo-romaneio-despacho .despacho-romaneio,
+  body.imprimindo-romaneio-despacho .despacho-romaneio * {
+    visibility: visible;
+  }
+
+  body.imprimindo-romaneio-despacho .despacho-fundo-romaneio {
+    position: static;
+    display: block;
+    padding: 0;
+    background: #fff;
+  }
+
+  body.imprimindo-romaneio-despacho .despacho-romaneio {
+    position: absolute;
+    inset: 0;
+    max-height: none;
+    max-width: none;
+    width: 100%;
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    background: #fff;
+    color: #111;
+    box-shadow: none;
+  }
+
+  body.imprimindo-romaneio-despacho .despacho-romaneio * {
+    color: #111 !important;
+    border-color: #c8c8c8 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  body.imprimindo-romaneio-despacho .despacho-nao-imprimir {
+    display: none !important;
+  }
+}

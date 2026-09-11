@@ -3,7 +3,8 @@
 import os
 import sys
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
+import pandas as pd
 
 # Garante backend no sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -50,20 +51,40 @@ class TestDespachoService(unittest.TestCase):
     """Testa a lógica de negócio do serviço de despacho."""
 
     def test_rejeita_pedido_cancelado(self):
-        with patch("app.pedidos_service._status_any_local", return_value="Cancelado"):
+        with patch("app.pedidos_service._status_despacho_atual", return_value="Cancelado"):
             res = registrar_despacho_pedido("99999", usuario="operador_teste", marketplace="meli")
             self.assertFalse(res["ok"])
             self.assertEqual(res["status"], "Cancelado")
             self.assertIn("cancelado", res["mensagem"].lower())
 
     def test_rejeita_pedido_nao_conferido(self):
-        with patch("app.pedidos_service._status_any_local", return_value="Em separação"):
+        with patch("app.pedidos_service._status_despacho_atual", return_value="Em separação"):
             res = registrar_despacho_pedido("99999", usuario="operador_teste", marketplace="meli")
             self.assertFalse(res["ok"])
             self.assertIn("conferir na bancada", res["mensagem"].lower())
 
+    def test_rejeita_agendado_sem_nf(self):
+        linhas = pd.DataFrame([{"Status CD": "Agendado 15/09", "NF Venda": ""}])
+        with (
+            patch("app.pedidos_service._status_despacho_atual", return_value="Recebido"),
+            patch("app.pedidos_service._linha_df_pedido", return_value=linhas),
+        ):
+            res = registrar_despacho_pedido("99999", usuario="operador_teste")
+            self.assertFalse(res["ok"])
+            self.assertIn("nf de venda", res["mensagem"].lower())
+
+    def test_rejeita_agendado_com_nf_mas_status_feito(self):
+        linhas = pd.DataFrame([{"Status CD": "Agendado 15/09", "NF Venda": "123456"}])
+        with (
+            patch("app.pedidos_service._status_despacho_atual", return_value="FEITO"),
+            patch("app.pedidos_service._linha_df_pedido", return_value=linhas),
+        ):
+            res = registrar_despacho_pedido("99999", usuario="operador_teste")
+            self.assertFalse(res["ok"])
+            self.assertIn("conferido ou recebido", res["mensagem"].lower())
+
     def test_avisa_pedido_ja_bipado(self):
-        with patch("app.pedidos_service._status_any_local", return_value="Ag. Coleta"):
+        with patch("app.pedidos_service._status_despacho_atual", return_value="Ag. Coleta"):
             res = registrar_despacho_pedido("99999", usuario="operador_teste", marketplace="meli")
             self.assertTrue(res["ok"])
             self.assertTrue(res["ja_bipado"])
@@ -73,7 +94,11 @@ class TestDespachoService(unittest.TestCase):
     @patch("app.pedidos_service._salvar_status_no_supabase")
     @patch("app.pedidos_service._atualizar_status_local")
     def test_despacho_com_sucesso(self, mock_atualizar, mock_salvar, mock_log):
-        with patch("app.pedidos_service._status_any_local", return_value="Conferido"):
+        with (
+            patch("app.pedidos_service._status_despacho_atual", return_value="Conferido"),
+            patch("app.pedidos_service._linha_df_pedido") as mock_linha,
+        ):
+            mock_linha.return_value.empty = True
             res = registrar_despacho_pedido(
                 "88888",
                 usuario="operador_teste",
@@ -92,13 +117,28 @@ class TestDespachoService(unittest.TestCase):
     @patch("app.pedidos_service._salvar_status_no_supabase")
     @patch("app.pedidos_service._atualizar_status_local")
     def test_estornar_despacho(self, mock_atualizar, mock_salvar, mock_log):
-        with patch("app.pedidos_service._status_any_local", return_value="Ag. Coleta"):
+        with patch("app.pedidos_service._status_despacho_atual", return_value="Ag. Coleta"):
             res = estornar_despacho_pedido("88888", usuario="operador_teste", motivo="Bipado errado")
             self.assertTrue(res["ok"])
             self.assertEqual(res["status_any"], "Conferido")
             mock_atualizar.assert_called_once_with("88888", "Conferido")
             mock_salvar.assert_called_once_with("88888", "Conferido", exigir_linha=False)
             mock_log.assert_called_once()
+
+    def test_rejeita_estorno_sem_despacho_ativo(self):
+        with patch("app.pedidos_service._status_despacho_atual", return_value="Conferido"):
+            res = estornar_despacho_pedido("88888", usuario="operador_teste")
+            self.assertFalse(res["ok"])
+            self.assertIn("não possui um despacho ativo", res["mensagem"].lower())
+
+    @patch("app.pedidos_service._salvar_status_no_supabase", return_value=False)
+    @patch("app.pedidos_service._linha_df_pedido")
+    def test_nao_confirma_despacho_sem_persistencia(self, mock_linha, _mock_salvar):
+        mock_linha.return_value.empty = True
+        with patch("app.pedidos_service._status_despacho_atual", return_value="Conferido"):
+            res = registrar_despacho_pedido("88888", usuario="operador_teste")
+            self.assertFalse(res["ok"])
+            self.assertIn("persistir", res["mensagem"].lower())
 
 
 class TestDespachoRotasAPI(unittest.TestCase):

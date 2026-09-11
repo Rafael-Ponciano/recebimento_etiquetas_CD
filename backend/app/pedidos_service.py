@@ -362,6 +362,7 @@ def _ids_com_saldo_completo(order_ids: Iterable[str] | None = None) -> set[str]:
                     lambda ids=lote_ids: client.table("conferencia_itens")
                     .select("order_id,quantidade_conferida,quantidade_total")
                     .in_("order_id", ids)
+                    .limit(5000)
                     .execute()
                 )
                 rows.extend(list(resp.data or []))
@@ -1008,7 +1009,7 @@ def obter_itens_pedido(order_id: str, *, force_refresh: bool = False):
         for chave in _chaves_order_id(order_id):
             res = executar_com_retry(
                 lambda c=chave: client.table("conferencia_itens")
-                .select("order_id,line_key,item_id,sku,seller,quantidade_total,quantidade_conferida,status,conferido_por,data_conferencia,sheet_sync_ok,sheet_sync_error,finalizado_em")
+                .select("*")
                 .eq("order_id", c)
                 .execute()
             )
@@ -3725,6 +3726,19 @@ def reimprimir_lote(order_ids: list[str], usuario: str) -> dict:
     return {"sucessos": sucessos, "erros": erros}
 
 
+def _status_despacho_atual(order_id: str) -> str:
+    """Prioriza o override persistido para não confiar no cache local de outro PC."""
+    try:
+        from . import status_manual_service
+
+        persistido = (status_manual_service.ler_status_manual(order_id) or "").strip()
+        if persistido:
+            return persistido
+    except Exception:
+        pass
+    return (_status_any_local(order_id) or "").strip()
+
+
 def registrar_despacho_pedido(
     order_id: str,
     usuario: str,
@@ -3737,10 +3751,7 @@ def registrar_despacho_pedido(
     if not oid:
         return {"ok": False, "mensagem": "ID do pedido não informado."}
 
-    atual = (_status_any_local(oid) or "").strip()
-    if not atual:
-        from . import status_manual_service
-        atual = (status_manual_service.ler_status_manual(oid) or "").strip()
+    atual = _status_despacho_atual(oid)
 
     if _eh_status_cancelado(atual):
         return {
@@ -3766,8 +3777,38 @@ def registrar_despacho_pedido(
             "mensagem": f"Pedido {oid} com status '{atual}'. É necessário conferir na bancada antes de despachar.",
         }
 
+    linhas = _linha_df_pedido(oid)
+    if linhas is not None and not linhas.empty:
+        status_cd = str(linhas.iloc[0].get("Status CD") or "").strip().casefold()
+        valores_nf = linhas.get("NF Venda", pd.Series(dtype=object))
+        tem_nf = any(
+            str(valor or "").strip().casefold() not in {"", "nan", "none", "null"}
+            for valor in valores_nf
+        )
+        if status_cd.startswith("agendado"):
+            status_libera_agendado = {
+                "conferido",
+                "recebido",
+                _status_coleta_hoje().casefold(),
+                _status_agendado().casefold(),
+            }
+            if not tem_nf or atual.casefold() not in status_libera_agendado:
+                return {
+                    "ok": False,
+                    "status": atual,
+                    "mensagem": (
+                        f"Pedido {oid} agendado ainda não está liberado para despacho. "
+                        "É necessário possuir NF de venda e status Conferido ou Recebido."
+                    ),
+                }
+
+    if not _salvar_status_no_supabase(oid, STATUS_AG_COLETA, exigir_linha=False):
+        return {
+            "ok": False,
+            "status": atual,
+            "mensagem": f"Não foi possível persistir o despacho do pedido {oid}. Tente novamente.",
+        }
     _atualizar_status_local(oid, STATUS_AG_COLETA)
-    _salvar_status_no_supabase(oid, STATUS_AG_COLETA, exigir_linha=False)
 
     agora_iso = datetime.now(timezone.utc).isoformat()
     detalhes_json = json.dumps(
@@ -3801,7 +3842,7 @@ def estornar_despacho_pedido(
     if not oid:
         return {"ok": False, "mensagem": "ID do pedido não informado."}
 
-    atual = (_status_any_local(oid) or "").strip()
+    atual = _status_despacho_atual(oid)
     if _eh_status_cancelado(atual):
         return {
             "ok": False,
@@ -3809,9 +3850,27 @@ def estornar_despacho_pedido(
             "mensagem": f"Pedido {oid} cancelado. Estorno não permitido.",
         }
 
+    if atual.casefold() not in {"ag. coleta", "ag. coleta cd"}:
+        return {
+            "ok": False,
+            "status": atual,
+            "mensagem": f"Pedido {oid} não possui um despacho ativo para estornar.",
+        }
+
     status_destino = _status_coleta_hoje()
+    linhas = _linha_df_pedido(oid)
+    if linhas is not None and not linhas.empty:
+        status_cd = str(linhas.iloc[0].get("Status CD") or "").strip().casefold()
+        if status_cd.startswith("agendado"):
+            status_destino = _status_agendado()
+
+    if not _salvar_status_no_supabase(oid, status_destino, exigir_linha=False):
+        return {
+            "ok": False,
+            "status": atual,
+            "mensagem": f"Não foi possível persistir o estorno do pedido {oid}. Tente novamente.",
+        }
     _atualizar_status_local(oid, status_destino)
-    _salvar_status_no_supabase(oid, status_destino, exigir_linha=False)
 
     detalhes_json = json.dumps(
         {
@@ -3849,4 +3908,3 @@ def consultar_despachos_recentes(limite: int = 500) -> list[dict]:
 
         logging.getLogger(__name__).warning("Falha ao consultar logs de despacho: %s", e)
         return []
-

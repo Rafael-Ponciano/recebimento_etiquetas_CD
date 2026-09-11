@@ -542,6 +542,21 @@ export default function ConferirDialog({
   }, []);
 
   useEffect(() => {
+    const overflowAnterior = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const fecharComEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", fecharComEscape);
+
+    return () => {
+      document.body.style.overflow = overflowAnterior;
+      window.removeEventListener("keydown", fecharComEscape);
+    };
+  }, [onClose]);
+
+  useEffect(() => {
     if (soConsulta) {
       setOutrosOperadores([]);
       return;
@@ -955,9 +970,9 @@ export default function ConferirDialog({
   const refsPedido = formatarReferenciasPedido(pedido);
 
   return (
-    <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/60 px-4">
-      <div className="flex max-h-[86vh] w-full max-w-2xl flex-col overflow-hidden rounded-xl border border-border-soft bg-surface shadow-2xl shadow-black/50">
-        <div className="flex items-start justify-between gap-3 border-b border-border-soft px-3.5 pb-2.5 pt-2.5">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-3 sm:p-4">
+      <div className="isolate flex max-h-[calc(100dvh-1.5rem)] w-full max-w-2xl flex-col overflow-hidden rounded-xl border border-border-soft bg-surface shadow-2xl shadow-black/50 sm:max-h-[86vh]">
+        <div className="relative z-10 flex shrink-0 items-start justify-between gap-3 border-b border-border-soft bg-surface px-3.5 pb-2.5 pt-2.5">
           <div className="flex min-w-0 flex-col justify-center gap-0.5">
             <div className="flex flex-wrap items-center gap-1.5">
               <h2 className="text-sm font-semibold tracking-tight text-amber">
@@ -999,13 +1014,19 @@ export default function ConferirDialog({
                 />
               </div>
             )}
-            <button onClick={onClose} className="rounded-md p-1 text-text-faint transition hover:bg-elevated hover:text-text">
+            <button
+              type="button"
+              onClick={onClose}
+              className="relative z-20 rounded-md p-1 text-text-faint transition hover:bg-elevated hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber"
+              aria-label="Fechar conferência"
+              title="Fechar"
+            >
               <X size={16} />
             </button>
           </div>
         </div>
 
-        <div className="border-b border-border-soft px-3.5 py-2">
+        <div className="shrink-0 border-b border-border-soft px-3.5 py-2">
           <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
             <InfoChip label="STATUS" value={statusAny || pedido["Status Any"]} />
             <InfoChip label="Data pedido" value={formatarData(pedido.Data, true)} />
@@ -1349,7 +1370,7 @@ export default function ConferirDialog({
 
         {resultado && (
           <div
-            className={`mx-3.5 mb-2 flex flex-col gap-1 rounded-md px-2.5 py-1.5 text-xs ${
+            className={`mx-3.5 mb-2 flex shrink-0 flex-col gap-1 rounded-md px-2.5 py-1.5 text-xs ${
               resultado.tipo === "success"
                 ? "border border-green/30 bg-green/10 text-green"
                 : resultado.tipo === "warning"
@@ -1375,7 +1396,7 @@ export default function ConferirDialog({
           precisaFinalizar ||
           podeDesmarcar
         ) && (
-        <div className="flex flex-wrap items-center gap-1.5 px-3.5 pb-2.5 pt-1">
+        <div className="flex shrink-0 flex-wrap items-center gap-1.5 bg-surface px-3.5 pb-2.5 pt-1">
           {(soConsulta || statusAny === "AG AJUSTE" || avisoImpressao) && onImprimir && (
               <button
                 type="button"

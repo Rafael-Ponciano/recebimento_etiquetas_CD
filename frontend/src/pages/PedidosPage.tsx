@@ -197,7 +197,7 @@ export default function PedidosPage() {
 
   const forcarRefreshRef = useRef(false);
   const { data, isFetching, isError, error } = useQuery({
-    queryKey: ["pedidos"],
+    queryKey: ["pedidos", "lista"],
     queryFn: async () => {
       const refresh = forcarRefreshRef.current;
       forcarRefreshRef.current = false;
@@ -216,7 +216,7 @@ export default function PedidosPage() {
     forcarRefreshRef.current = true;
     try {
       await queryClient.fetchQuery({
-        queryKey: ["pedidos"],
+        queryKey: ["pedidos", "lista"],
         queryFn: async () => {
           forcarRefreshRef.current = false;
           const { data } = await api.get<{ items: Pedido[]; total: number }>("/pedidos", {
