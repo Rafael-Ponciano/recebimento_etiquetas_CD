@@ -1,0 +1,184 @@
+@import "tailwindcss";
+
+@import "@fontsource/dm-sans/500.css";
+@import "@fontsource/dm-sans/600.css";
+@import "@fontsource/dm-sans/700.css";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+
+@theme {
+  --color-void: #0a0d11;
+  --color-surface: #12161d;
+  --color-elevated: #1a2029;
+  --color-border: #262e3a;
+  --color-border-soft: #1d232d;
+
+  --color-text: #eef2f7;
+  --color-text-muted: #9aa6b5;
+  --color-text-faint: #6b7585;
+
+  --color-amber: #f2a63c;
+  --color-amber-dim: #4a3a20;
+  --color-cyan: #4fb8d8;
+  --color-green: #3ecf8e;
+  --color-red: #e5586b;
+
+  --font-display: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+html, body, #root {
+  height: 100%;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+@supports (height: 100dvh) {
+  html, body, #root {
+    height: 100dvh;
+    max-height: 100dvh;
+  }
+}
+
+html {
+  color-scheme: dark;
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background-color: var(--color-void);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-synthesis: none;
+  margin: 0;
+}
+
+#root {
+  min-height: 100%;
+  background-color: var(--color-void);
+}
+
+button,
+a,
+summary,
+label[for],
+[role="button"],
+select,
+input[type="checkbox"],
+input[type="radio"],
+input[type="file"] {
+  cursor: pointer;
+}
+
+button:disabled,
+[role="button"][aria-disabled="true"],
+select:disabled,
+input:disabled {
+  cursor: not-allowed;
+}
+
+::selection {
+  background: var(--color-amber);
+  color: var(--color-void);
+}
+
+.data-table {
+  color: #c2cad6;
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
+  text-rendering: geometricPrecision;
+  font-synthesis: none;
+}
+
+.data-table thead {
+  color: #8b95a5;
+}
+
+.data-table tbody td {
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.data-table tbody tr:hover {
+  color: #d5dce6;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) var(--color-surface);
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--color-surface);
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 999px;
+  border: 2px solid var(--color-surface);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-faint);
+}
+
+*::-webkit-scrollbar-corner {
+  background: var(--color-surface);
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--color-text);
+  caret-color: var(--color-text);
+  box-shadow: 0 0 0 1000px var(--color-elevated) inset;
+  transition: background-color 9999s ease-out;
+}
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear,
+input::-webkit-credentials-auto-fill-button,
+input::-webkit-strong-password-auto-fill-button {
+  display: none !important;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.perforated {
+  background-image: radial-gradient(circle, var(--color-border) 1.5px, transparent 1.5px);
+  background-size: 10px 100%;
+  background-position: 0 center;
+  height: 1px;
+}
+
+.hazard-strip {
+  height: 3px;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--color-amber) 0px,
+    var(--color-amber) 7px,
+    transparent 7px,
+    transparent 14px
+  );
+  opacity: 0.55;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

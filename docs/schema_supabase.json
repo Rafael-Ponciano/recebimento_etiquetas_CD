@@ -1,0 +1,3519 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "",
+    "title": "standard public schema",
+    "version": "14.5"
+  },
+  "host": "dknadsjgtlvtlekbrjah.supabase.co:443",
+  "basePath": "/",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json",
+    "application/vnd.pgrst.object+json;nulls=stripped",
+    "application/vnd.pgrst.object+json",
+    "text/csv"
+  ],
+  "produces": [
+    "application/json",
+    "application/vnd.pgrst.object+json;nulls=stripped",
+    "application/vnd.pgrst.object+json",
+    "text/csv"
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "produces": [
+          "application/openapi+json",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "summary": "OpenAPI description (this document)",
+        "tags": [
+          "Introspection"
+        ]
+      }
+    },
+    "/pedidos_status_manual": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.pedidos_status_manual.id_any"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.pedidos_status_manual.status_any"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.pedidos_status_manual.usuario"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.pedidos_status_manual.observacao"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.pedidos_status_manual.atualizado_em"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/order"
+          },
+          {
+            "$ref": "#/parameters/range"
+          },
+          {
+            "$ref": "#/parameters/rangeUnit"
+          },
+          {
+            "$ref": "#/parameters/offset"
+          },
+          {
+            "$ref": "#/parameters/limit"
+          },
+          {
+            "$ref": "#/parameters/preferCount"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/pedidos_status_manual"
+              },
+              "type": "array"
+            }
+          },
+          "206": {
+            "description": "Partial Content"
+          }
+        },
+        "tags": [
+          "pedidos_status_manual"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/body.pedidos_status_manual"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/preferPost"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "pedidos_status_manual"
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.pedidos_status_manual.id_any"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.pedidos_status_manual.status_any"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.pedidos_status_manual.usuario"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.pedidos_status_manual.observacao"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.pedidos_status_manual.atualizado_em"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "pedidos_status_manual"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.pedidos_status_manual.id_any"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.pedidos_status_manual.status_any"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.pedidos_status_manual.usuario"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.pedidos_status_manual.observacao"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.pedidos_status_manual.atualizado_em"
+          },
+          {
+            "$ref": "#/parameters/body.pedidos_status_manual"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "pedidos_status_manual"
+        ]
+      }
+    },
+    "/conferencia_performance": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_performance.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_performance.order_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_performance.usuario"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_performance.total_ms"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_performance.etapas"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_performance.texto"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_performance.pedido_concluido"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_performance.status_pedido"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_performance.created_at"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/order"
+          },
+          {
+            "$ref": "#/parameters/range"
+          },
+          {
+            "$ref": "#/parameters/rangeUnit"
+          },
+          {
+            "$ref": "#/parameters/offset"
+          },
+          {
+            "$ref": "#/parameters/limit"
+          },
+          {
+            "$ref": "#/parameters/preferCount"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/conferencia_performance"
+              },
+              "type": "array"
+            }
+          },
+          "206": {
+            "description": "Partial Content"
+          }
+        },
+        "tags": [
+          "conferencia_performance"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/body.conferencia_performance"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/preferPost"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "conferencia_performance"
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_performance.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_performance.order_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_performance.usuario"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_performance.total_ms"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_performance.etapas"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_performance.texto"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_performance.pedido_concluido"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_performance.status_pedido"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_performance.created_at"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "conferencia_performance"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_performance.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_performance.order_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_performance.usuario"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_performance.total_ms"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_performance.etapas"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_performance.texto"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_performance.pedido_concluido"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_performance.status_pedido"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_performance.created_at"
+          },
+          {
+            "$ref": "#/parameters/body.conferencia_performance"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "conferencia_performance"
+        ]
+      }
+    },
+    "/preferencias_usuario": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.preferencias_usuario.usuario"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.preferencias_usuario.tela"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.preferencias_usuario.preferencias"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.preferencias_usuario.atualizado_em"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/order"
+          },
+          {
+            "$ref": "#/parameters/range"
+          },
+          {
+            "$ref": "#/parameters/rangeUnit"
+          },
+          {
+            "$ref": "#/parameters/offset"
+          },
+          {
+            "$ref": "#/parameters/limit"
+          },
+          {
+            "$ref": "#/parameters/preferCount"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/preferencias_usuario"
+              },
+              "type": "array"
+            }
+          },
+          "206": {
+            "description": "Partial Content"
+          }
+        },
+        "tags": [
+          "preferencias_usuario"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/body.preferencias_usuario"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/preferPost"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "preferencias_usuario"
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.preferencias_usuario.usuario"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.preferencias_usuario.tela"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.preferencias_usuario.preferencias"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.preferencias_usuario.atualizado_em"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "preferencias_usuario"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.preferencias_usuario.usuario"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.preferencias_usuario.tela"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.preferencias_usuario.preferencias"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.preferencias_usuario.atualizado_em"
+          },
+          {
+            "$ref": "#/parameters/body.preferencias_usuario"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "preferencias_usuario"
+        ]
+      }
+    },
+    "/conferencia_recebimentos": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.order_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.line_key"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.sku"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.seller"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.quantidade"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.quantidade_anterior"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.quantidade_acumulada"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.quantidade_total"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.operador"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.recebido_em"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/order"
+          },
+          {
+            "$ref": "#/parameters/range"
+          },
+          {
+            "$ref": "#/parameters/rangeUnit"
+          },
+          {
+            "$ref": "#/parameters/offset"
+          },
+          {
+            "$ref": "#/parameters/limit"
+          },
+          {
+            "$ref": "#/parameters/preferCount"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/conferencia_recebimentos"
+              },
+              "type": "array"
+            }
+          },
+          "206": {
+            "description": "Partial Content"
+          }
+        },
+        "tags": [
+          "conferencia_recebimentos"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/body.conferencia_recebimentos"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/preferPost"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "conferencia_recebimentos"
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.order_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.line_key"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.sku"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.seller"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.quantidade"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.quantidade_anterior"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.quantidade_acumulada"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.quantidade_total"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.operador"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.recebido_em"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "conferencia_recebimentos"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.order_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.line_key"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.sku"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.seller"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.quantidade"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.quantidade_anterior"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.quantidade_acumulada"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.quantidade_total"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.operador"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_recebimentos.recebido_em"
+          },
+          {
+            "$ref": "#/parameters/body.conferencia_recebimentos"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "conferencia_recebimentos"
+        ]
+      }
+    },
+    "/conferencia_presenca": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_presenca.order_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_presenca.operador"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_presenca.nome"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_presenca.atualizado_em"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/order"
+          },
+          {
+            "$ref": "#/parameters/range"
+          },
+          {
+            "$ref": "#/parameters/rangeUnit"
+          },
+          {
+            "$ref": "#/parameters/offset"
+          },
+          {
+            "$ref": "#/parameters/limit"
+          },
+          {
+            "$ref": "#/parameters/preferCount"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/conferencia_presenca"
+              },
+              "type": "array"
+            }
+          },
+          "206": {
+            "description": "Partial Content"
+          }
+        },
+        "tags": [
+          "conferencia_presenca"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/body.conferencia_presenca"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/preferPost"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "conferencia_presenca"
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_presenca.order_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_presenca.operador"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_presenca.nome"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_presenca.atualizado_em"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "conferencia_presenca"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_presenca.order_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_presenca.operador"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_presenca.nome"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_presenca.atualizado_em"
+          },
+          {
+            "$ref": "#/parameters/body.conferencia_presenca"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "conferencia_presenca"
+        ]
+      }
+    },
+    "/chat_mensagens": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.de_usuario"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.para_usuario"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.texto"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.imagem_storage_path"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.imagem_nome"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.imagem_mime"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.imagem_purgada"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.lida_em"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.created_at"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/order"
+          },
+          {
+            "$ref": "#/parameters/range"
+          },
+          {
+            "$ref": "#/parameters/rangeUnit"
+          },
+          {
+            "$ref": "#/parameters/offset"
+          },
+          {
+            "$ref": "#/parameters/limit"
+          },
+          {
+            "$ref": "#/parameters/preferCount"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/chat_mensagens"
+              },
+              "type": "array"
+            }
+          },
+          "206": {
+            "description": "Partial Content"
+          }
+        },
+        "tags": [
+          "chat_mensagens"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/body.chat_mensagens"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/preferPost"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "chat_mensagens"
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.de_usuario"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.para_usuario"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.texto"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.imagem_storage_path"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.imagem_nome"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.imagem_mime"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.imagem_purgada"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.lida_em"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.created_at"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "chat_mensagens"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.de_usuario"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.para_usuario"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.texto"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.imagem_storage_path"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.imagem_nome"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.imagem_mime"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.imagem_purgada"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.lida_em"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.chat_mensagens.created_at"
+          },
+          {
+            "$ref": "#/parameters/body.chat_mensagens"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "chat_mensagens"
+        ]
+      }
+    },
+    "/logs": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.logs.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.logs.usuario"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.logs.tipo_acao"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.logs.detalhes"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.logs.pedido_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.logs.created_at"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/order"
+          },
+          {
+            "$ref": "#/parameters/range"
+          },
+          {
+            "$ref": "#/parameters/rangeUnit"
+          },
+          {
+            "$ref": "#/parameters/offset"
+          },
+          {
+            "$ref": "#/parameters/limit"
+          },
+          {
+            "$ref": "#/parameters/preferCount"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/logs"
+              },
+              "type": "array"
+            }
+          },
+          "206": {
+            "description": "Partial Content"
+          }
+        },
+        "tags": [
+          "logs"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/body.logs"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/preferPost"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "logs"
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.logs.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.logs.usuario"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.logs.tipo_acao"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.logs.detalhes"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.logs.pedido_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.logs.created_at"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "logs"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.logs.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.logs.usuario"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.logs.tipo_acao"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.logs.detalhes"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.logs.pedido_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.logs.created_at"
+          },
+          {
+            "$ref": "#/parameters/body.logs"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "logs"
+        ]
+      }
+    },
+    "/conferencia_finalizacoes": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_finalizacoes.order_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_finalizacoes.status"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_finalizacoes.operador"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_finalizacoes.iniciado_em"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_finalizacoes.finalizado_em"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/order"
+          },
+          {
+            "$ref": "#/parameters/range"
+          },
+          {
+            "$ref": "#/parameters/rangeUnit"
+          },
+          {
+            "$ref": "#/parameters/offset"
+          },
+          {
+            "$ref": "#/parameters/limit"
+          },
+          {
+            "$ref": "#/parameters/preferCount"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/conferencia_finalizacoes"
+              },
+              "type": "array"
+            }
+          },
+          "206": {
+            "description": "Partial Content"
+          }
+        },
+        "tags": [
+          "conferencia_finalizacoes"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/body.conferencia_finalizacoes"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/preferPost"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "conferencia_finalizacoes"
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_finalizacoes.order_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_finalizacoes.status"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_finalizacoes.operador"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_finalizacoes.iniciado_em"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_finalizacoes.finalizado_em"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "conferencia_finalizacoes"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_finalizacoes.order_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_finalizacoes.status"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_finalizacoes.operador"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_finalizacoes.iniciado_em"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_finalizacoes.finalizado_em"
+          },
+          {
+            "$ref": "#/parameters/body.conferencia_finalizacoes"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "conferencia_finalizacoes"
+        ]
+      }
+    },
+    "/conferencia_itens": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.order_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.line_key"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.item_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.sku"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.seller"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.quantidade_total"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.quantidade_conferida"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.status"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.conferido_por"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.data_conferencia"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.sheet_sync_ok"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.sheet_sync_error"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/order"
+          },
+          {
+            "$ref": "#/parameters/range"
+          },
+          {
+            "$ref": "#/parameters/rangeUnit"
+          },
+          {
+            "$ref": "#/parameters/offset"
+          },
+          {
+            "$ref": "#/parameters/limit"
+          },
+          {
+            "$ref": "#/parameters/preferCount"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/conferencia_itens"
+              },
+              "type": "array"
+            }
+          },
+          "206": {
+            "description": "Partial Content"
+          }
+        },
+        "tags": [
+          "conferencia_itens"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/body.conferencia_itens"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/preferPost"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "conferencia_itens"
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.order_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.line_key"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.item_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.sku"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.seller"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.quantidade_total"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.quantidade_conferida"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.status"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.conferido_por"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.data_conferencia"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.sheet_sync_ok"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.sheet_sync_error"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "conferencia_itens"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.order_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.line_key"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.item_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.sku"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.seller"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.quantidade_total"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.quantidade_conferida"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.status"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.conferido_por"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.data_conferencia"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.sheet_sync_ok"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.conferencia_itens.sheet_sync_error"
+          },
+          {
+            "$ref": "#/parameters/body.conferencia_itens"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "conferencia_itens"
+        ]
+      }
+    },
+    "/usuarios": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.usuario"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.nome"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.role"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.email"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.imagem"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.senha_hash"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.ativo"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.reset_codigo_hash"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.reset_expira_em"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.updated_at"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/order"
+          },
+          {
+            "$ref": "#/parameters/range"
+          },
+          {
+            "$ref": "#/parameters/rangeUnit"
+          },
+          {
+            "$ref": "#/parameters/offset"
+          },
+          {
+            "$ref": "#/parameters/limit"
+          },
+          {
+            "$ref": "#/parameters/preferCount"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/usuarios"
+              },
+              "type": "array"
+            }
+          },
+          "206": {
+            "description": "Partial Content"
+          }
+        },
+        "tags": [
+          "usuarios"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/body.usuarios"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/preferPost"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "usuarios"
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.usuario"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.nome"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.role"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.email"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.imagem"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.senha_hash"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.ativo"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.reset_codigo_hash"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.reset_expira_em"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.updated_at"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "usuarios"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.usuario"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.nome"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.role"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.email"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.imagem"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.senha_hash"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.ativo"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.reset_codigo_hash"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.reset_expira_em"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.usuarios.updated_at"
+          },
+          {
+            "$ref": "#/parameters/body.usuarios"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "usuarios"
+        ]
+      }
+    },
+    "/rpc/listar_conferencia_performance": {
+      "post": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "args",
+            "required": true,
+            "schema": {
+              "properties": {
+                "p_data_fim": {
+                  "format": "date",
+                  "type": "string"
+                },
+                "p_data_ini": {
+                  "format": "date",
+                  "type": "string"
+                },
+                "p_limit": {
+                  "format": "integer",
+                  "type": "integer"
+                },
+                "p_order_id": {
+                  "format": "text",
+                  "type": "string"
+                },
+                "p_usuario": {
+                  "format": "text",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            }
+          },
+          {
+            "$ref": "#/parameters/preferParams"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/vnd.pgrst.object+json;nulls=stripped",
+          "application/vnd.pgrst.object+json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "(rpc) listar_conferencia_performance"
+        ]
+      }
+    },
+    "/rpc/registrar_resultado_sync_sheets": {
+      "post": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "args",
+            "required": true,
+            "schema": {
+              "properties": {
+                "p_erro": {
+                  "format": "text",
+                  "type": "string"
+                },
+                "p_line_key": {
+                  "format": "text",
+                  "type": "string"
+                },
+                "p_ok": {
+                  "format": "boolean",
+                  "type": "boolean"
+                },
+                "p_order_id": {
+                  "format": "text",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "p_order_id",
+                "p_line_key",
+                "p_ok",
+                "p_erro"
+              ],
+              "type": "object"
+            }
+          },
+          {
+            "$ref": "#/parameters/preferParams"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/vnd.pgrst.object+json;nulls=stripped",
+          "application/vnd.pgrst.object+json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "(rpc) registrar_resultado_sync_sheets"
+        ]
+      }
+    },
+    "/rpc/registrar_conferencia_performance": {
+      "post": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "args",
+            "required": true,
+            "schema": {
+              "properties": {
+                "p_etapas": {
+                  "format": "jsonb"
+                },
+                "p_order_id": {
+                  "format": "text",
+                  "type": "string"
+                },
+                "p_pedido_concluido": {
+                  "format": "boolean",
+                  "type": "boolean"
+                },
+                "p_status_pedido": {
+                  "format": "text",
+                  "type": "string"
+                },
+                "p_texto": {
+                  "format": "text",
+                  "type": "string"
+                },
+                "p_total_ms": {
+                  "format": "numeric",
+                  "type": "number"
+                },
+                "p_usuario": {
+                  "format": "text",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "p_order_id",
+                "p_usuario",
+                "p_total_ms",
+                "p_etapas"
+              ],
+              "type": "object"
+            }
+          },
+          {
+            "$ref": "#/parameters/preferParams"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/vnd.pgrst.object+json;nulls=stripped",
+          "application/vnd.pgrst.object+json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "(rpc) registrar_conferencia_performance"
+        ]
+      }
+    },
+    "/rpc/resetar_saldo_conferencia": {
+      "post": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "args",
+            "required": true,
+            "schema": {
+              "properties": {
+                "p_order_id": {
+                  "format": "text",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "p_order_id"
+              ],
+              "type": "object"
+            }
+          },
+          {
+            "$ref": "#/parameters/preferParams"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/vnd.pgrst.object+json;nulls=stripped",
+          "application/vnd.pgrst.object+json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "(rpc) resetar_saldo_conferencia"
+        ]
+      }
+    },
+    "/rpc/registrar_recebimento_item": {
+      "post": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "args",
+            "required": true,
+            "schema": {
+              "properties": {
+                "p_item_id": {
+                  "format": "text",
+                  "type": "string"
+                },
+                "p_line_key": {
+                  "format": "text",
+                  "type": "string"
+                },
+                "p_operador": {
+                  "format": "text",
+                  "type": "string"
+                },
+                "p_order_id": {
+                  "format": "text",
+                  "type": "string"
+                },
+                "p_quantidade": {
+                  "format": "integer",
+                  "type": "integer"
+                },
+                "p_quantidade_total": {
+                  "format": "integer",
+                  "type": "integer"
+                },
+                "p_seller": {
+                  "format": "text",
+                  "type": "string"
+                },
+                "p_sku": {
+                  "format": "text",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "p_order_id",
+                "p_line_key",
+                "p_item_id",
+                "p_sku",
+                "p_seller",
+                "p_quantidade_total",
+                "p_quantidade",
+                "p_operador"
+              ],
+              "type": "object"
+            }
+          },
+          {
+            "$ref": "#/parameters/preferParams"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/vnd.pgrst.object+json;nulls=stripped",
+          "application/vnd.pgrst.object+json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "(rpc) registrar_recebimento_item"
+        ]
+      }
+    },
+    "/rpc/concluir_finalizacao_pedido": {
+      "post": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "args",
+            "required": true,
+            "schema": {
+              "properties": {
+                "p_order_id": {
+                  "format": "text",
+                  "type": "string"
+                },
+                "p_status": {
+                  "format": "text",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "p_order_id",
+                "p_status"
+              ],
+              "type": "object"
+            }
+          },
+          {
+            "$ref": "#/parameters/preferParams"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/vnd.pgrst.object+json;nulls=stripped",
+          "application/vnd.pgrst.object+json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "(rpc) concluir_finalizacao_pedido"
+        ]
+      }
+    },
+    "/rpc/limpar_retencao": {
+      "post": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "args",
+            "required": true,
+            "schema": {
+              "properties": {
+                "p_dias_logs": {
+                  "format": "integer",
+                  "type": "integer"
+                },
+                "p_dias_recebimentos": {
+                  "format": "integer",
+                  "type": "integer"
+                }
+              },
+              "type": "object"
+            }
+          },
+          {
+            "$ref": "#/parameters/preferParams"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/vnd.pgrst.object+json;nulls=stripped",
+          "application/vnd.pgrst.object+json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "(rpc) limpar_retencao"
+        ]
+      }
+    },
+    "/rpc/liberar_lock_finalizacao_pedido": {
+      "post": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "args",
+            "required": true,
+            "schema": {
+              "properties": {
+                "p_order_id": {
+                  "format": "text",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "p_order_id"
+              ],
+              "type": "object"
+            }
+          },
+          {
+            "$ref": "#/parameters/preferParams"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/vnd.pgrst.object+json;nulls=stripped",
+          "application/vnd.pgrst.object+json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "(rpc) liberar_lock_finalizacao_pedido"
+        ]
+      }
+    },
+    "/rpc/tentar_iniciar_finalizacao_pedido": {
+      "post": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "args",
+            "required": true,
+            "schema": {
+              "properties": {
+                "p_operador": {
+                  "format": "text",
+                  "type": "string"
+                },
+                "p_order_id": {
+                  "format": "text",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "p_order_id",
+                "p_operador"
+              ],
+              "type": "object"
+            }
+          },
+          {
+            "$ref": "#/parameters/preferParams"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/vnd.pgrst.object+json;nulls=stripped",
+          "application/vnd.pgrst.object+json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "(rpc) tentar_iniciar_finalizacao_pedido"
+        ]
+      }
+    },
+    "/rpc/rls_auto_enable": {
+      "post": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "args",
+            "required": true,
+            "schema": {
+              "type": "object"
+            }
+          },
+          {
+            "$ref": "#/parameters/preferParams"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/vnd.pgrst.object+json;nulls=stripped",
+          "application/vnd.pgrst.object+json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "(rpc) rls_auto_enable"
+        ]
+      }
+    },
+    "/rpc/dashboard_agregado": {
+      "get": {
+        "parameters": [
+          {
+            "format": "timestamp with time zone",
+            "in": "query",
+            "name": "p_ini",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "format": "timestamp with time zone",
+            "in": "query",
+            "name": "p_fim",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "format": "text",
+            "in": "query",
+            "name": "p_usuario",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/vnd.pgrst.object+json;nulls=stripped",
+          "application/vnd.pgrst.object+json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "(rpc) dashboard_agregado"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "args",
+            "required": true,
+            "schema": {
+              "properties": {
+                "p_fim": {
+                  "format": "timestamp with time zone",
+                  "type": "string"
+                },
+                "p_ini": {
+                  "format": "timestamp with time zone",
+                  "type": "string"
+                },
+                "p_usuario": {
+                  "format": "text",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "p_ini",
+                "p_fim"
+              ],
+              "type": "object"
+            }
+          },
+          {
+            "$ref": "#/parameters/preferParams"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/vnd.pgrst.object+json;nulls=stripped",
+          "application/vnd.pgrst.object+json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "(rpc) dashboard_agregado"
+        ]
+      }
+    },
+    "/rpc/obter_perfil_usuario": {
+      "post": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "args",
+            "required": true,
+            "schema": {
+              "properties": {
+                "p_usuario": {
+                  "format": "text",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "p_usuario"
+              ],
+              "type": "object"
+            }
+          },
+          {
+            "$ref": "#/parameters/preferParams"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/vnd.pgrst.object+json;nulls=stripped",
+          "application/vnd.pgrst.object+json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "(rpc) obter_perfil_usuario"
+        ]
+      }
+    },
+    "/rpc/atualizar_perfil_usuario": {
+      "post": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "args",
+            "required": true,
+            "schema": {
+              "properties": {
+                "p_atualizar_imagem": {
+                  "format": "boolean",
+                  "type": "boolean"
+                },
+                "p_email": {
+                  "format": "text",
+                  "type": "string"
+                },
+                "p_imagem": {
+                  "format": "text",
+                  "type": "string"
+                },
+                "p_nome": {
+                  "format": "text",
+                  "type": "string"
+                },
+                "p_usuario": {
+                  "format": "text",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "p_usuario",
+                "p_nome",
+                "p_email",
+                "p_imagem"
+              ],
+              "type": "object"
+            }
+          },
+          {
+            "$ref": "#/parameters/preferParams"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/vnd.pgrst.object+json;nulls=stripped",
+          "application/vnd.pgrst.object+json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "(rpc) atualizar_perfil_usuario"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "pedidos_status_manual": {
+      "required": [
+        "id_any",
+        "status_any",
+        "atualizado_em"
+      ],
+      "properties": {
+        "id_any": {
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "text",
+          "type": "string"
+        },
+        "status_any": {
+          "format": "text",
+          "type": "string"
+        },
+        "usuario": {
+          "format": "text",
+          "type": "string"
+        },
+        "observacao": {
+          "format": "text",
+          "type": "string"
+        },
+        "atualizado_em": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "conferencia_performance": {
+      "required": [
+        "id",
+        "order_id",
+        "etapas",
+        "pedido_concluido",
+        "created_at"
+      ],
+      "properties": {
+        "id": {
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "bigint",
+          "type": "integer"
+        },
+        "order_id": {
+          "format": "text",
+          "type": "string"
+        },
+        "usuario": {
+          "format": "text",
+          "type": "string"
+        },
+        "total_ms": {
+          "format": "numeric",
+          "type": "number"
+        },
+        "etapas": {
+          "format": "jsonb"
+        },
+        "texto": {
+          "format": "text",
+          "type": "string"
+        },
+        "pedido_concluido": {
+          "default": false,
+          "format": "boolean",
+          "type": "boolean"
+        },
+        "status_pedido": {
+          "format": "text",
+          "type": "string"
+        },
+        "created_at": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "preferencias_usuario": {
+      "required": [
+        "usuario",
+        "tela",
+        "preferencias",
+        "atualizado_em"
+      ],
+      "properties": {
+        "usuario": {
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "text",
+          "type": "string"
+        },
+        "tela": {
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "text",
+          "type": "string"
+        },
+        "preferencias": {
+          "format": "jsonb"
+        },
+        "atualizado_em": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "conferencia_recebimentos": {
+      "required": [
+        "id",
+        "order_id",
+        "line_key",
+        "quantidade",
+        "recebido_em"
+      ],
+      "properties": {
+        "id": {
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "bigint",
+          "type": "integer"
+        },
+        "order_id": {
+          "format": "text",
+          "type": "string"
+        },
+        "line_key": {
+          "format": "text",
+          "type": "string"
+        },
+        "sku": {
+          "format": "text",
+          "type": "string"
+        },
+        "seller": {
+          "format": "text",
+          "type": "string"
+        },
+        "quantidade": {
+          "format": "integer",
+          "type": "integer"
+        },
+        "quantidade_anterior": {
+          "format": "integer",
+          "type": "integer"
+        },
+        "quantidade_acumulada": {
+          "format": "integer",
+          "type": "integer"
+        },
+        "quantidade_total": {
+          "format": "integer",
+          "type": "integer"
+        },
+        "operador": {
+          "format": "text",
+          "type": "string"
+        },
+        "recebido_em": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "conferencia_presenca": {
+      "required": [
+        "order_id",
+        "operador",
+        "atualizado_em"
+      ],
+      "properties": {
+        "order_id": {
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "text",
+          "type": "string"
+        },
+        "operador": {
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "text",
+          "type": "string"
+        },
+        "nome": {
+          "format": "text",
+          "type": "string"
+        },
+        "atualizado_em": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "chat_mensagens": {
+      "required": [
+        "id",
+        "de_usuario",
+        "para_usuario",
+        "imagem_purgada",
+        "created_at"
+      ],
+      "properties": {
+        "id": {
+          "default": "gen_random_uuid()",
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "de_usuario": {
+          "format": "text",
+          "type": "string"
+        },
+        "para_usuario": {
+          "format": "text",
+          "type": "string"
+        },
+        "texto": {
+          "format": "text",
+          "type": "string"
+        },
+        "imagem_storage_path": {
+          "format": "text",
+          "type": "string"
+        },
+        "imagem_nome": {
+          "format": "text",
+          "type": "string"
+        },
+        "imagem_mime": {
+          "format": "text",
+          "type": "string"
+        },
+        "imagem_purgada": {
+          "default": false,
+          "format": "boolean",
+          "type": "boolean"
+        },
+        "lida_em": {
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "created_at": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "logs": {
+      "required": [
+        "id",
+        "tipo_acao",
+        "created_at"
+      ],
+      "properties": {
+        "id": {
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "bigint",
+          "type": "integer"
+        },
+        "usuario": {
+          "format": "text",
+          "type": "string"
+        },
+        "tipo_acao": {
+          "format": "text",
+          "type": "string"
+        },
+        "detalhes": {
+          "format": "text",
+          "type": "string"
+        },
+        "pedido_id": {
+          "format": "text",
+          "type": "string"
+        },
+        "created_at": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "conferencia_finalizacoes": {
+      "required": [
+        "order_id"
+      ],
+      "properties": {
+        "order_id": {
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "text",
+          "type": "string"
+        },
+        "status": {
+          "format": "text",
+          "type": "string"
+        },
+        "operador": {
+          "format": "text",
+          "type": "string"
+        },
+        "iniciado_em": {
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "finalizado_em": {
+          "format": "timestamp with time zone",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "conferencia_itens": {
+      "required": [
+        "id",
+        "order_id",
+        "line_key",
+        "quantidade_total",
+        "quantidade_conferida",
+        "status"
+      ],
+      "properties": {
+        "id": {
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "bigint",
+          "type": "integer"
+        },
+        "order_id": {
+          "format": "text",
+          "type": "string"
+        },
+        "line_key": {
+          "format": "text",
+          "type": "string"
+        },
+        "item_id": {
+          "format": "text",
+          "type": "string"
+        },
+        "sku": {
+          "format": "text",
+          "type": "string"
+        },
+        "seller": {
+          "format": "text",
+          "type": "string"
+        },
+        "quantidade_total": {
+          "default": 0,
+          "format": "integer",
+          "type": "integer"
+        },
+        "quantidade_conferida": {
+          "default": 0,
+          "format": "integer",
+          "type": "integer"
+        },
+        "status": {
+          "default": "Pendente",
+          "format": "text",
+          "type": "string"
+        },
+        "conferido_por": {
+          "format": "text",
+          "type": "string"
+        },
+        "data_conferencia": {
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "sheet_sync_ok": {
+          "format": "boolean",
+          "type": "boolean"
+        },
+        "sheet_sync_error": {
+          "format": "text",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "usuarios": {
+      "required": [
+        "id",
+        "usuario",
+        "role",
+        "ativo",
+        "created_at",
+        "updated_at"
+      ],
+      "properties": {
+        "id": {
+          "default": "gen_random_uuid()",
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "usuario": {
+          "format": "text",
+          "type": "string"
+        },
+        "nome": {
+          "format": "text",
+          "type": "string"
+        },
+        "role": {
+          "default": "operador",
+          "format": "text",
+          "type": "string"
+        },
+        "email": {
+          "format": "text",
+          "type": "string"
+        },
+        "imagem": {
+          "format": "text",
+          "type": "string"
+        },
+        "senha_hash": {
+          "format": "text",
+          "type": "string"
+        },
+        "ativo": {
+          "default": true,
+          "format": "boolean",
+          "type": "boolean"
+        },
+        "reset_codigo_hash": {
+          "format": "text",
+          "type": "string"
+        },
+        "reset_expira_em": {
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "created_at": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "updated_at": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "parameters": {
+    "preferParams": {
+      "name": "Prefer",
+      "description": "Preference",
+      "required": false,
+      "in": "header",
+      "type": "string"
+    },
+    "preferReturn": {
+      "name": "Prefer",
+      "description": "Preference",
+      "required": false,
+      "enum": [
+        "return=representation",
+        "return=minimal",
+        "return=none"
+      ],
+      "in": "header",
+      "type": "string"
+    },
+    "preferCount": {
+      "name": "Prefer",
+      "description": "Preference",
+      "required": false,
+      "enum": [
+        "count=none"
+      ],
+      "in": "header",
+      "type": "string"
+    },
+    "preferPost": {
+      "name": "Prefer",
+      "description": "Preference",
+      "required": false,
+      "enum": [
+        "return=representation",
+        "return=minimal",
+        "return=none",
+        "resolution=ignore-duplicates",
+        "resolution=merge-duplicates"
+      ],
+      "in": "header",
+      "type": "string"
+    },
+    "select": {
+      "name": "select",
+      "description": "Filtering Columns",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "on_conflict": {
+      "name": "on_conflict",
+      "description": "On Conflict",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "order": {
+      "name": "order",
+      "description": "Ordering",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "range": {
+      "name": "Range",
+      "description": "Limiting and Pagination",
+      "required": false,
+      "in": "header",
+      "type": "string"
+    },
+    "rangeUnit": {
+      "name": "Range-Unit",
+      "description": "Limiting and Pagination",
+      "required": false,
+      "default": "items",
+      "in": "header",
+      "type": "string"
+    },
+    "offset": {
+      "name": "offset",
+      "description": "Limiting and Pagination",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "limit": {
+      "name": "limit",
+      "description": "Limiting and Pagination",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "body.pedidos_status_manual": {
+      "name": "pedidos_status_manual",
+      "description": "pedidos_status_manual",
+      "required": false,
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/pedidos_status_manual"
+      }
+    },
+    "rowFilter.pedidos_status_manual.id_any": {
+      "name": "id_any",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.pedidos_status_manual.status_any": {
+      "name": "status_any",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.pedidos_status_manual.usuario": {
+      "name": "usuario",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.pedidos_status_manual.observacao": {
+      "name": "observacao",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.pedidos_status_manual.atualizado_em": {
+      "name": "atualizado_em",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "body.conferencia_performance": {
+      "name": "conferencia_performance",
+      "description": "conferencia_performance",
+      "required": false,
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/conferencia_performance"
+      }
+    },
+    "rowFilter.conferencia_performance.id": {
+      "name": "id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_performance.order_id": {
+      "name": "order_id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_performance.usuario": {
+      "name": "usuario",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_performance.total_ms": {
+      "name": "total_ms",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_performance.etapas": {
+      "name": "etapas",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_performance.texto": {
+      "name": "texto",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_performance.pedido_concluido": {
+      "name": "pedido_concluido",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_performance.status_pedido": {
+      "name": "status_pedido",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_performance.created_at": {
+      "name": "created_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "body.preferencias_usuario": {
+      "name": "preferencias_usuario",
+      "description": "preferencias_usuario",
+      "required": false,
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/preferencias_usuario"
+      }
+    },
+    "rowFilter.preferencias_usuario.usuario": {
+      "name": "usuario",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.preferencias_usuario.tela": {
+      "name": "tela",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.preferencias_usuario.preferencias": {
+      "name": "preferencias",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.preferencias_usuario.atualizado_em": {
+      "name": "atualizado_em",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "body.conferencia_recebimentos": {
+      "name": "conferencia_recebimentos",
+      "description": "conferencia_recebimentos",
+      "required": false,
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/conferencia_recebimentos"
+      }
+    },
+    "rowFilter.conferencia_recebimentos.id": {
+      "name": "id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_recebimentos.order_id": {
+      "name": "order_id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_recebimentos.line_key": {
+      "name": "line_key",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_recebimentos.sku": {
+      "name": "sku",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_recebimentos.seller": {
+      "name": "seller",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_recebimentos.quantidade": {
+      "name": "quantidade",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_recebimentos.quantidade_anterior": {
+      "name": "quantidade_anterior",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_recebimentos.quantidade_acumulada": {
+      "name": "quantidade_acumulada",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_recebimentos.quantidade_total": {
+      "name": "quantidade_total",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_recebimentos.operador": {
+      "name": "operador",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_recebimentos.recebido_em": {
+      "name": "recebido_em",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "body.conferencia_presenca": {
+      "name": "conferencia_presenca",
+      "description": "conferencia_presenca",
+      "required": false,
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/conferencia_presenca"
+      }
+    },
+    "rowFilter.conferencia_presenca.order_id": {
+      "name": "order_id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_presenca.operador": {
+      "name": "operador",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_presenca.nome": {
+      "name": "nome",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_presenca.atualizado_em": {
+      "name": "atualizado_em",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "body.chat_mensagens": {
+      "name": "chat_mensagens",
+      "description": "chat_mensagens",
+      "required": false,
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/chat_mensagens"
+      }
+    },
+    "rowFilter.chat_mensagens.id": {
+      "name": "id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.chat_mensagens.de_usuario": {
+      "name": "de_usuario",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.chat_mensagens.para_usuario": {
+      "name": "para_usuario",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.chat_mensagens.texto": {
+      "name": "texto",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.chat_mensagens.imagem_storage_path": {
+      "name": "imagem_storage_path",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.chat_mensagens.imagem_nome": {
+      "name": "imagem_nome",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.chat_mensagens.imagem_mime": {
+      "name": "imagem_mime",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.chat_mensagens.imagem_purgada": {
+      "name": "imagem_purgada",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.chat_mensagens.lida_em": {
+      "name": "lida_em",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.chat_mensagens.created_at": {
+      "name": "created_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "body.logs": {
+      "name": "logs",
+      "description": "logs",
+      "required": false,
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/logs"
+      }
+    },
+    "rowFilter.logs.id": {
+      "name": "id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.logs.usuario": {
+      "name": "usuario",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.logs.tipo_acao": {
+      "name": "tipo_acao",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.logs.detalhes": {
+      "name": "detalhes",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.logs.pedido_id": {
+      "name": "pedido_id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.logs.created_at": {
+      "name": "created_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "body.conferencia_finalizacoes": {
+      "name": "conferencia_finalizacoes",
+      "description": "conferencia_finalizacoes",
+      "required": false,
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/conferencia_finalizacoes"
+      }
+    },
+    "rowFilter.conferencia_finalizacoes.order_id": {
+      "name": "order_id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_finalizacoes.status": {
+      "name": "status",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_finalizacoes.operador": {
+      "name": "operador",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_finalizacoes.iniciado_em": {
+      "name": "iniciado_em",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_finalizacoes.finalizado_em": {
+      "name": "finalizado_em",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "body.conferencia_itens": {
+      "name": "conferencia_itens",
+      "description": "conferencia_itens",
+      "required": false,
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/conferencia_itens"
+      }
+    },
+    "rowFilter.conferencia_itens.id": {
+      "name": "id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_itens.order_id": {
+      "name": "order_id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_itens.line_key": {
+      "name": "line_key",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_itens.item_id": {
+      "name": "item_id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_itens.sku": {
+      "name": "sku",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_itens.seller": {
+      "name": "seller",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_itens.quantidade_total": {
+      "name": "quantidade_total",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_itens.quantidade_conferida": {
+      "name": "quantidade_conferida",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_itens.status": {
+      "name": "status",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_itens.conferido_por": {
+      "name": "conferido_por",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_itens.data_conferencia": {
+      "name": "data_conferencia",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_itens.sheet_sync_ok": {
+      "name": "sheet_sync_ok",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.conferencia_itens.sheet_sync_error": {
+      "name": "sheet_sync_error",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "body.usuarios": {
+      "name": "usuarios",
+      "description": "usuarios",
+      "required": false,
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/usuarios"
+      }
+    },
+    "rowFilter.usuarios.id": {
+      "name": "id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.usuarios.usuario": {
+      "name": "usuario",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.usuarios.nome": {
+      "name": "nome",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.usuarios.role": {
+      "name": "role",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.usuarios.email": {
+      "name": "email",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.usuarios.imagem": {
+      "name": "imagem",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.usuarios.senha_hash": {
+      "name": "senha_hash",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.usuarios.ativo": {
+      "name": "ativo",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.usuarios.reset_codigo_hash": {
+      "name": "reset_codigo_hash",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.usuarios.reset_expira_em": {
+      "name": "reset_expira_em",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.usuarios.created_at": {
+      "name": "created_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.usuarios.updated_at": {
+      "name": "updated_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    }
+  },
+  "externalDocs": {
+    "description": "PostgREST Documentation",
+    "url": "https://postgrest.org/en/v14/references/api.html"
+  }
+}
