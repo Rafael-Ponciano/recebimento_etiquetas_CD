@@ -227,7 +227,7 @@ def _carregar_itens_conferencia(order_id: str) -> list[dict]:
     client = get_client()
     resp = (
         client.table("conferencia_itens")
-        .select("order_id,line_key,item_id,sku,seller,quantidade_total,quantidade_conferida,status,conferido_por,data_conferencia,sheet_sync_ok,sheet_sync_error,finalizado_em")
+        .select("*")
         .eq("order_id", str(order_id))
         .execute()
     )

@@ -145,7 +145,7 @@ function AbaOperacional() {
   const forcarRefreshRef = useRef(false);
 
   const { data, isFetching, isError, error, refetch } = useQuery({
-    queryKey: ["pedidos"],
+    queryKey: ["pedidos", "lista"],
     queryFn: async () => {
       const refresh = forcarRefreshRef.current;
       forcarRefreshRef.current = false;
@@ -197,7 +197,7 @@ function AbaOperacional() {
     forcarRefreshRef.current = true;
     try {
       await queryClient.fetchQuery({
-        queryKey: ["pedidos"],
+        queryKey: ["pedidos", "lista"],
         queryFn: async () => {
           forcarRefreshRef.current = false;
           const { data: body } = await api.get<{ items: Pedido[]; total: number }>("/pedidos", {

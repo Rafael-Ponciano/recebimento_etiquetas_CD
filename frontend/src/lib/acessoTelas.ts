@@ -31,9 +31,10 @@ export function temTela(
   tela: string
 ): boolean {
   if (!user) return false;
+  if (user.role === "admin") return true;
   if ((user.usuario || "").toLowerCase() === ADMIN_ACESSO.toLowerCase()) return true;
   if (user.telas?.length) return user.telas.includes(tela);
   // Fallback legado (sessão antiga sem telas)
-  if (tela === "pedidos" || tela === "historico") return true;
-  return user.role === "admin";
+  if (tela === "pedidos" || tela === "historico" || tela === "despacho") return true;
+  return false;
 }
