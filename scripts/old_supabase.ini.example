@@ -1,0 +1,5 @@
+[DEFAULT]
+# Copie para old_supabase.ini e preencha (não commitar a chave).
+# Usado por: python scripts/upload_latest_json.py --also-old
+SUPABASE_URL = https://SEU-PROJETO-ANTIGO.supabase.co
+SUPABASE_KEY = sua_service_role_antiga

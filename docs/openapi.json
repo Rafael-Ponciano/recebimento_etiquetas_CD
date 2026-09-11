@@ -1,0 +1,2823 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Conferência de Pedidos API",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Login",
+        "operationId": "login_api_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Me",
+        "operationId": "me_api_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthUser"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/auth/resumo-dia": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Resumo Dia",
+        "operationId": "resumo_dia_api_auth_resumo_dia_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/auth/perfil": {
+      "put": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Atualizar Perfil",
+        "operationId": "atualizar_perfil_api_auth_perfil_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PerfilRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthUser"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/auth/senha": {
+      "put": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Alterar Senha",
+        "operationId": "alterar_senha_api_auth_senha_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SenhaRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/auth/recuperar-senha": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Recuperar Senha",
+        "operationId": "recuperar_senha_api_auth_recuperar_senha_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecuperarSenhaRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/redefinir-senha": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Redefinir Senha",
+        "operationId": "redefinir_senha_api_auth_redefinir_senha_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RedefinirSenhaRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Logout",
+        "operationId": "logout_api_auth_logout_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/logs": {
+      "get": {
+        "tags": [
+          "logs"
+        ],
+        "summary": "Listar Logs",
+        "operationId": "listar_logs_api_logs_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "data_ini",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Data Ini"
+            }
+          },
+          {
+            "name": "data_fim",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Data Fim"
+            }
+          },
+          {
+            "name": "tipo_acao",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filtro 'contém' no tipo de ação",
+              "title": "Tipo Acao"
+            },
+            "description": "Filtro 'contém' no tipo de ação"
+          },
+          {
+            "name": "usuario",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Usuario"
+            }
+          },
+          {
+            "name": "pedido_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Pedido Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/logs/limpar-retencao": {
+      "post": {
+        "tags": [
+          "logs"
+        ],
+        "summary": "Limpar Retencao",
+        "operationId": "limpar_retencao_api_logs_limpar_retencao_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LimpezaRetencaoRequest",
+                "default": {
+                  "dias_logs": 30,
+                  "dias_recebimentos": 120
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/pedidos": {
+      "get": {
+        "tags": [
+          "pedidos"
+        ],
+        "summary": "Listar Pedidos",
+        "operationId": "listar_pedidos_api_pedidos_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "refresh",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "Ignora cache e lê de novo no Supabase",
+              "default": false,
+              "title": "Refresh"
+            },
+            "description": "Ignora cache e lê de novo no Supabase"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pedidos/erros-sheets": {
+      "get": {
+        "tags": [
+          "pedidos"
+        ],
+        "summary": "Listar Erros Sheets",
+        "operationId": "listar_erros_sheets_api_pedidos_erros_sheets_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/pedidos/erros-sheets/count": {
+      "get": {
+        "tags": [
+          "pedidos"
+        ],
+        "summary": "Contar Erros Sheets",
+        "operationId": "contar_erros_sheets_api_pedidos_erros_sheets_count_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/pedidos/erros-sheets/resolver": {
+      "post": {
+        "tags": [
+          "pedidos"
+        ],
+        "summary": "Resolver Erro Sheets",
+        "operationId": "resolver_erro_sheets_api_pedidos_erros_sheets_resolver_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResolverSheetsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/pedidos/erros-sheets/retry": {
+      "post": {
+        "tags": [
+          "pedidos"
+        ],
+        "summary": "Retry Erro Sheets",
+        "operationId": "retry_erro_sheets_api_pedidos_erros_sheets_retry_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResolverSheetsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/pedidos/erros-finalizacao": {
+      "get": {
+        "tags": [
+          "pedidos"
+        ],
+        "summary": "Listar Erros Finalizacao",
+        "operationId": "listar_erros_finalizacao_api_pedidos_erros_finalizacao_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/pedidos/erros-finalizacao/count": {
+      "get": {
+        "tags": [
+          "pedidos"
+        ],
+        "summary": "Contar Erros Finalizacao",
+        "operationId": "contar_erros_finalizacao_api_pedidos_erros_finalizacao_count_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/pedidos/erros-finalizacao/resolver": {
+      "post": {
+        "tags": [
+          "pedidos"
+        ],
+        "summary": "Resolver Erro Finalizacao",
+        "operationId": "resolver_erro_finalizacao_api_pedidos_erros_finalizacao_resolver_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResolverFinalizacaoRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/pedidos/erros-finalizacao/retry": {
+      "post": {
+        "tags": [
+          "pedidos"
+        ],
+        "summary": "Retry Erro Finalizacao",
+        "operationId": "retry_erro_finalizacao_api_pedidos_erros_finalizacao_retry_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResolverFinalizacaoRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/pedidos/lote/passo": {
+      "post": {
+        "tags": [
+          "pedidos"
+        ],
+        "summary": "Lote Passo",
+        "description": "Uma fase de um pedido — o front controla o progresso do modal.",
+        "operationId": "lote_passo_api_pedidos_lote_passo_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LotePassoRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/pedidos/lote/imprimir": {
+      "post": {
+        "tags": [
+          "pedidos"
+        ],
+        "summary": "Imprimir Lote",
+        "operationId": "imprimir_lote_api_pedidos_lote_imprimir_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoteRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/pedidos/despachos/recentes": {
+      "get": {
+        "tags": [
+          "pedidos"
+        ],
+        "summary": "Listar Despachos Recentes",
+        "operationId": "listar_despachos_recentes_api_pedidos_despachos_recentes_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limite",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 2000,
+              "minimum": 1,
+              "default": 500,
+              "title": "Limite"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pedidos/{order_id}/itens": {
+      "get": {
+        "tags": [
+          "pedidos"
+        ],
+        "summary": "Itens Do Pedido",
+        "operationId": "itens_do_pedido_api_pedidos__order_id__itens_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pedidos/{order_id}/presenca": {
+      "post": {
+        "tags": [
+          "pedidos"
+        ],
+        "summary": "Heartbeat Presenca",
+        "operationId": "heartbeat_presenca_api_pedidos__order_id__presenca_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "pedidos"
+        ],
+        "summary": "Sair Presenca",
+        "operationId": "sair_presenca_api_pedidos__order_id__presenca_delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pedidos/{order_id}/conferir-item": {
+      "post": {
+        "tags": [
+          "pedidos"
+        ],
+        "summary": "Conferir Item",
+        "operationId": "conferir_item_api_pedidos__order_id__conferir_item_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConferenciaItemRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pedidos/{order_id}/desmarcar-conferencia": {
+      "post": {
+        "tags": [
+          "pedidos"
+        ],
+        "summary": "Desmarcar Conferencia",
+        "operationId": "desmarcar_conferencia_api_pedidos__order_id__desmarcar_conferencia_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pedidos/{order_id}/retomar-finalizacao": {
+      "post": {
+        "tags": [
+          "pedidos"
+        ],
+        "summary": "Retomar Finalizacao",
+        "operationId": "retomar_finalizacao_api_pedidos__order_id__retomar_finalizacao_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RetomarFinalizacaoRequest",
+                "default": {
+                  "forcar_conferencia": false
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pedidos/{order_id}/imprimir": {
+      "post": {
+        "tags": [
+          "pedidos"
+        ],
+        "summary": "Imprimir",
+        "operationId": "imprimir_api_pedidos__order_id__imprimir_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImprimirRequest",
+                "default": {
+                  "modo": "todos"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pedidos/{order_id}/registrar-despacho": {
+      "post": {
+        "tags": [
+          "pedidos"
+        ],
+        "summary": "Registrar Despacho",
+        "operationId": "registrar_despacho_api_pedidos__order_id__registrar_despacho_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/RegistrarDespachoRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pedidos/{order_id}/estornar-despacho": {
+      "post": {
+        "tags": [
+          "pedidos"
+        ],
+        "summary": "Estornar Despacho",
+        "operationId": "estornar_despacho_api_pedidos__order_id__estornar_despacho_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/EstornarDespachoRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/preferencias/{tela}": {
+      "get": {
+        "tags": [
+          "preferencias"
+        ],
+        "summary": "Obter Preferencias",
+        "operationId": "obter_preferencias_api_preferencias__tela__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tela",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Tela"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "preferencias"
+        ],
+        "summary": "Salvar Preferencias",
+        "operationId": "salvar_preferencias_api_preferencias__tela__put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tela",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Tela"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreferenciasPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/historico": {
+      "get": {
+        "tags": [
+          "historico"
+        ],
+        "summary": "Listar Historico",
+        "operationId": "listar_historico_api_historico_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "data_ini",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Data Ini"
+            }
+          },
+          {
+            "name": "data_fim",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Data Fim"
+            }
+          },
+          {
+            "name": "usuario",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Usuario"
+            }
+          },
+          {
+            "name": "pedido",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Pedido"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 10000,
+              "minimum": 0,
+              "description": "0 = todos (exportação)",
+              "default": 100,
+              "title": "Limit"
+            },
+            "description": "0 = todos (exportação)"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/historico/{order_id}": {
+      "get": {
+        "tags": [
+          "historico"
+        ],
+        "summary": "Detalhe Historico",
+        "operationId": "detalhe_historico_api_historico__order_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/performance/tempo-cliente": {
+      "post": {
+        "tags": [
+          "performance"
+        ],
+        "summary": "Registrar Tempo Cliente",
+        "description": "Grava o tempo sentido: clique em Conferir → processo terminar / modal fechar.",
+        "operationId": "registrar_tempo_cliente_api_performance_tempo_cliente_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TempoClienteBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/performance": {
+      "get": {
+        "tags": [
+          "performance"
+        ],
+        "summary": "Listar Performance",
+        "operationId": "listar_performance_api_performance_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "data_ini",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Data Ini"
+            }
+          },
+          {
+            "name": "data_fim",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Data Fim"
+            }
+          },
+          {
+            "name": "order_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Order Id"
+            }
+          },
+          {
+            "name": "usuario",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Usuario"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "default": 200,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/baixa-manual/status": {
+      "get": {
+        "tags": [
+          "baixa-manual"
+        ],
+        "summary": "Listar Status",
+        "operationId": "listar_status_api_baixa_manual_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/baixa-manual/buscar": {
+      "get": {
+        "tags": [
+          "baixa-manual"
+        ],
+        "summary": "Buscar",
+        "operationId": "buscar_api_baixa_manual_buscar_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "title": "Q"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/baixa-manual/aplicar": {
+      "post": {
+        "tags": [
+          "baixa-manual"
+        ],
+        "summary": "Aplicar",
+        "operationId": "aplicar_api_baixa_manual_aplicar_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BaixaManualRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/dashboard": {
+      "get": {
+        "tags": [
+          "dashboard"
+        ],
+        "summary": "Obter Dashboard",
+        "operationId": "obter_dashboard_api_dashboard_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "data_ini",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Data Ini"
+            }
+          },
+          {
+            "name": "data_fim",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Data Fim"
+            }
+          },
+          {
+            "name": "usuario",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Usuario"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/update/status": {
+      "get": {
+        "tags": [
+          "update"
+        ],
+        "summary": "Status Update",
+        "operationId": "status_update_api_update_status_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "force",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Force"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/update/progress": {
+      "get": {
+        "tags": [
+          "update"
+        ],
+        "summary": "Progress Update",
+        "operationId": "progress_update_api_update_progress_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/update/aplicar": {
+      "post": {
+        "tags": [
+          "update"
+        ],
+        "summary": "Aplicar Update",
+        "operationId": "aplicar_update_api_update_aplicar_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/etiquetas-prefetch/status": {
+      "get": {
+        "tags": [
+          "etiquetas-prefetch"
+        ],
+        "summary": "Obter Status",
+        "operationId": "obter_status_api_etiquetas_prefetch_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/etiquetas-prefetch/config": {
+      "get": {
+        "tags": [
+          "etiquetas-prefetch"
+        ],
+        "summary": "Obter Config",
+        "operationId": "obter_config_api_etiquetas_prefetch_config_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "etiquetas-prefetch"
+        ],
+        "summary": "Salvar Config",
+        "operationId": "salvar_config_api_etiquetas_prefetch_config_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfigBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/acesso-telas/config": {
+      "get": {
+        "tags": [
+          "acesso-telas"
+        ],
+        "summary": "Obter Config",
+        "operationId": "obter_config_api_acesso_telas_config_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "acesso-telas"
+        ],
+        "summary": "Salvar Config",
+        "operationId": "salvar_config_api_acesso_telas_config_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MapaBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/health": {
+      "get": {
+        "summary": "Health",
+        "operationId": "health_api_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AuthUser": {
+        "properties": {
+          "usuario": {
+            "type": "string",
+            "title": "Usuario"
+          },
+          "nome": {
+            "type": "string",
+            "title": "Nome"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "imagem": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Imagem"
+          },
+          "telas": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Telas",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "usuario",
+          "nome",
+          "role"
+        ],
+        "title": "AuthUser"
+      },
+      "BaixaManualRequest": {
+        "properties": {
+          "order_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Order Id"
+          },
+          "novo_status": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Novo Status"
+          },
+          "observacao": {
+            "type": "string",
+            "title": "Observacao",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "order_id",
+          "novo_status"
+        ],
+        "title": "BaixaManualRequest"
+      },
+      "ConferenciaItemRequest": {
+        "properties": {
+          "line_key": {
+            "type": "string",
+            "minLength": 3,
+            "title": "Line Key"
+          },
+          "quantidade": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Quantidade"
+          },
+          "forcar_conferencia": {
+            "type": "boolean",
+            "title": "Forcar Conferencia",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "line_key",
+          "quantidade"
+        ],
+        "title": "ConferenciaItemRequest"
+      },
+      "ConfigBody": {
+        "properties": {
+          "usuarios": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Usuarios"
+          }
+        },
+        "type": "object",
+        "title": "ConfigBody"
+      },
+      "EstornarDespachoRequest": {
+        "properties": {
+          "motivo": {
+            "type": "string",
+            "title": "Motivo",
+            "description": "Motivo do estorno do despacho",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "title": "EstornarDespachoRequest"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ImprimirRequest": {
+        "properties": {
+          "status_any": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status Any"
+          },
+          "modo": {
+            "type": "string",
+            "title": "Modo",
+            "default": "todos"
+          },
+          "docs": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Docs"
+          }
+        },
+        "type": "object",
+        "title": "ImprimirRequest"
+      },
+      "LimpezaRetencaoRequest": {
+        "properties": {
+          "dias_logs": {
+            "type": "integer",
+            "maximum": 365.0,
+            "minimum": 7.0,
+            "title": "Dias Logs",
+            "description": "Apaga logs mais antigos que N dias",
+            "default": 30
+          },
+          "dias_recebimentos": {
+            "type": "integer",
+            "maximum": 730.0,
+            "minimum": 30.0,
+            "title": "Dias Recebimentos",
+            "description": "Apaga cargas de recebimento (timeline) mais antigas que N dias",
+            "default": 120
+          }
+        },
+        "type": "object",
+        "title": "LimpezaRetencaoRequest"
+      },
+      "LoginRequest": {
+        "properties": {
+          "usuario": {
+            "type": "string",
+            "title": "Usuario"
+          },
+          "senha": {
+            "type": "string",
+            "title": "Senha"
+          }
+        },
+        "type": "object",
+        "required": [
+          "usuario",
+          "senha"
+        ],
+        "title": "LoginRequest"
+      },
+      "LoginResponse": {
+        "properties": {
+          "token": {
+            "type": "string",
+            "title": "Token"
+          }
+        },
+        "type": "object",
+        "required": [
+          "token"
+        ],
+        "title": "LoginResponse"
+      },
+      "LotePassoRequest": {
+        "properties": {
+          "order_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Order Id"
+          },
+          "fase": {
+            "type": "string",
+            "minLength": 3,
+            "title": "Fase",
+            "description": "conferir | baixar | imprimir | planilha"
+          },
+          "forcar_conferencia": {
+            "type": "boolean",
+            "title": "Forcar Conferencia",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "order_id",
+          "fase"
+        ],
+        "title": "LotePassoRequest"
+      },
+      "LoteRequest": {
+        "properties": {
+          "order_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Order Ids"
+          }
+        },
+        "type": "object",
+        "required": [
+          "order_ids"
+        ],
+        "title": "LoteRequest"
+      },
+      "MapaBody": {
+        "properties": {
+          "mapa": {
+            "additionalProperties": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "type": "object",
+            "title": "Mapa"
+          }
+        },
+        "type": "object",
+        "title": "MapaBody"
+      },
+      "PerfilRequest": {
+        "properties": {
+          "nome": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 2,
+            "title": "Nome"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 254
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "imagem": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 600000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Imagem"
+          }
+        },
+        "type": "object",
+        "required": [
+          "nome"
+        ],
+        "title": "PerfilRequest"
+      },
+      "PreferenciasPayload": {
+        "properties": {
+          "preferencias": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Preferencias"
+          }
+        },
+        "type": "object",
+        "title": "PreferenciasPayload"
+      },
+      "RecuperarSenhaRequest": {
+        "properties": {
+          "identificador": {
+            "type": "string",
+            "maxLength": 254,
+            "minLength": 2,
+            "title": "Identificador"
+          }
+        },
+        "type": "object",
+        "required": [
+          "identificador"
+        ],
+        "title": "RecuperarSenhaRequest"
+      },
+      "RedefinirSenhaRequest": {
+        "properties": {
+          "identificador": {
+            "type": "string",
+            "maxLength": 254,
+            "minLength": 2,
+            "title": "Identificador"
+          },
+          "codigo": {
+            "type": "string",
+            "maxLength": 12,
+            "minLength": 4,
+            "title": "Codigo"
+          },
+          "nova_senha": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 8,
+            "title": "Nova Senha"
+          }
+        },
+        "type": "object",
+        "required": [
+          "identificador",
+          "codigo",
+          "nova_senha"
+        ],
+        "title": "RedefinirSenhaRequest"
+      },
+      "RegistrarDespachoRequest": {
+        "properties": {
+          "marketplace": {
+            "type": "string",
+            "title": "Marketplace",
+            "description": "Marketplace / transportadora do despacho",
+            "default": ""
+          },
+          "chave_nfe": {
+            "type": "string",
+            "title": "Chave Nfe",
+            "description": "Chave da NF-e (44 dígitos)",
+            "default": ""
+          },
+          "nf_venda": {
+            "type": "string",
+            "title": "Nf Venda",
+            "description": "Número da NF de venda",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "title": "RegistrarDespachoRequest"
+      },
+      "ResolverFinalizacaoRequest": {
+        "properties": {
+          "order_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Order Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "order_id"
+        ],
+        "title": "ResolverFinalizacaoRequest"
+      },
+      "ResolverSheetsRequest": {
+        "properties": {
+          "order_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Order Id"
+          },
+          "line_key": {
+            "type": "string",
+            "minLength": 3,
+            "title": "Line Key"
+          }
+        },
+        "type": "object",
+        "required": [
+          "order_id",
+          "line_key"
+        ],
+        "title": "ResolverSheetsRequest"
+      },
+      "RetomarFinalizacaoRequest": {
+        "properties": {
+          "forcar_conferencia": {
+            "type": "boolean",
+            "title": "Forcar Conferencia",
+            "default": false
+          }
+        },
+        "type": "object",
+        "title": "RetomarFinalizacaoRequest"
+      },
+      "SenhaRequest": {
+        "properties": {
+          "senha_atual": {
+            "type": "string",
+            "title": "Senha Atual"
+          },
+          "nova_senha": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 8,
+            "title": "Nova Senha"
+          }
+        },
+        "type": "object",
+        "required": [
+          "senha_atual",
+          "nova_senha"
+        ],
+        "title": "SenhaRequest"
+      },
+      "TempoClienteBody": {
+        "properties": {
+          "order_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Order Id"
+          },
+          "total_ms": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Total Ms"
+          }
+        },
+        "type": "object",
+        "required": [
+          "order_id",
+          "total_ms"
+        ],
+        "title": "TempoClienteBody"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}

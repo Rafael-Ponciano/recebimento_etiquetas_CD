@@ -1,0 +1,32 @@
+# Segredos / locais
+config.ini
+scripts/old_supabase.ini
+credenciais.json
+recebimento-sa-key.json
+token_any.json
+anymarket_token.json
+conferencia_erro.log
+
+# Runtime / build
+_webview_data/
+release/
+backend/dist/
+backend/build/
+backend/static/
+frontend/dist/
+frontend/node_modules/
+backend/.venv/
+
+# Python cache & logs
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+.pytest_cache/
+
+# Downloads temporários de etiquetas/danfes
+downloads/
+
+# Releases grandes
+releases/*.zip
+releases/ConferenciaPedidos-*/
