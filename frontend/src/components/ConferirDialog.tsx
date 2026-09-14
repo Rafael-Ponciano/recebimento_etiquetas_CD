@@ -425,6 +425,8 @@ export default function ConferirDialog({
   const [quantidades, setQuantidades] = useState<Record<string, number>>({});
   const [processando, setProcessando] = useState<string | null>(null);
   const [desmarcando, setDesmarcando] = useState(false);
+  const [confirmarDesmarcarAberto, setConfirmarDesmarcarAberto] = useState(false);
+  const executarDesmarcarConferenciaRef = useRef<() => Promise<void>>(() => Promise.resolve());
   const [retomando, setRetomando] = useState(false);
   const [statusAny, setStatusAny] = useState(pedido["Status Any"] || "");
   const [timeline, setTimeline] = useState<{
@@ -556,6 +558,25 @@ export default function ConferirDialog({
     };
   }, [onClose]);
 
+  // Intercepta Escape e Enter com prioridade quando o modal de confirmação de desmarcar estiver aberto
+  useEffect(() => {
+    if (!confirmarDesmarcarAberto) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        setConfirmarDesmarcarAberto(false);
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        e.stopPropagation();
+        setConfirmarDesmarcarAberto(false);
+        void executarDesmarcarConferenciaRef.current();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown, true);
+    return () => window.removeEventListener("keydown", handleKeyDown, true);
+  }, [confirmarDesmarcarAberto]);
+
   useEffect(() => {
     if (soConsulta) {
       setOutrosOperadores([]);
@@ -592,16 +613,8 @@ export default function ConferirDialog({
     }
   };
 
-  const desmarcarConferencia = async () => {
+  const executarDesmarcarConferencia = async () => {
     if (!podeDesmarcar || desmarcando) return;
-    const ok = window.confirm(
-      "Desmarcar a conferência deste pedido?\n\n" +
-        "• Zera o saldo conferido (libera Conferir de novo)\n" +
-        "• Desmarca na AnyMarket\n" +
-        "• Status local volta para A conferir"
-    );
-    if (!ok) return;
-
     setDesmarcando(true);
     try {
       const { data } = await api.post<{
@@ -636,6 +649,7 @@ export default function ConferirDialog({
       setDesmarcando(false);
     }
   };
+  executarDesmarcarConferenciaRef.current = executarDesmarcarConferencia;
 
   const retomarFinalizacao = async () => {
     if (!precisaFinalizar || retomando) return;
@@ -1444,7 +1458,7 @@ export default function ConferirDialog({
             {podeDesmarcar && (
               <button
                 type="button"
-                onClick={() => void desmarcarConferencia()}
+                onClick={() => setConfirmarDesmarcarAberto(true)}
                 disabled={desmarcando || retomando}
                 className="inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-elevated/50 px-3 text-xs text-text transition hover:border-text-faint hover:bg-elevated disabled:opacity-50"
                 title="Desmarca os itens na AnyMarket (admin)"
@@ -1456,6 +1470,70 @@ export default function ConferirDialog({
         </div>
         )}
       </div>
+
+      {/* Modal Temático para Desmarcar Conferência */}
+      {confirmarDesmarcarAberto && (
+        <div className="fixed inset-0 z-70 flex items-center justify-center bg-black/80 p-4 backdrop-blur-xs">
+          <div className="flex w-full max-w-md flex-col overflow-hidden rounded-2xl border border-amber/40 bg-surface shadow-2xl shadow-black/90">
+            <div className="flex items-center gap-3 border-b border-border bg-amber/10 px-5 py-3.5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-amber/40 bg-amber/20 text-amber">
+                <Undo2 size={20} />
+              </div>
+              <div>
+                <h4 className="font-display text-sm font-bold text-white">
+                  Desmarcar Conferência
+                </h4>
+                <p className="font-mono text-[11px] text-amber">
+                  Pedido {pedido.Pedido || pedido.id_any}
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-3 p-5 text-xs">
+              <p className="leading-relaxed text-text">
+                Deseja realmente desmarcar a conferência deste pedido?
+              </p>
+              <div className="space-y-2 rounded-xl border border-border bg-elevated/50 p-3.5 text-[11px] text-text-muted">
+                <div className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber shrink-0" />
+                  <span>Zera o saldo conferido e libera conferir novamente</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber shrink-0" />
+                  <span>Desmarca os itens na AnyMarket</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber shrink-0" />
+                  <span>Status local volta para <strong className="text-text">A conferir</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 border-t border-border bg-elevated/60 px-5 py-3">
+              <button
+                type="button"
+                disabled={desmarcando}
+                onClick={() => setConfirmarDesmarcarAberto(false)}
+                className="rounded-lg border border-border bg-surface px-3.5 py-1.5 text-xs font-medium text-text-muted transition hover:bg-elevated hover:text-text disabled:opacity-50"
+              >
+                Cancelar (Esc)
+              </button>
+              <button
+                type="button"
+                disabled={desmarcando}
+                onClick={async () => {
+                  setConfirmarDesmarcarAberto(false);
+                  await executarDesmarcarConferencia();
+                }}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-amber px-4 py-1.5 font-display text-xs font-bold text-void shadow transition hover:brightness-110 active:brightness-95 disabled:opacity-50"
+              >
+                {desmarcando ? <Loader2 size={13} className="animate-spin" /> : <Undo2 size={13} />}
+                Sim, Desmarcar (Enter)
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

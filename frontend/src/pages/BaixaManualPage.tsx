@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent } from "react";
+import { useMemo, useState, useEffect, type FormEvent } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CircleCheck, CircleX, Loader2, Search, Wrench } from "lucide-react";
 import { api } from "../lib/api";
@@ -36,6 +36,7 @@ export default function BaixaManualPage() {
   const [observacao, setObservacao] = useState("");
   const [resultado, setResultado] = useState<ResultadoBaixa | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+  const [confirmarModalAberto, setConfirmarModalAberto] = useState(false);
 
   const { data: statusOpts } = useQuery({
     queryKey: ["baixa-manual-status"],
@@ -109,20 +110,33 @@ export default function BaixaManualPage() {
     setErro(null);
   }
 
-  function confirmar() {
+  function abrirConfirmacao() {
     if (!selecionado || !novoStatus) return;
     if (novoStatus === selecionado.status_any) {
       setErro("Escolha um status diferente do atual.");
       return;
     }
-    const ok = window.confirm(
-      `Alterar status do pedido ${selecionado.id_any}?\n\n` +
-        `${selecionado.status_any || "—"} → ${novoStatus}\n\n` +
-        "Isso grava no banco e gera log na timeline."
-    );
-    if (!ok) return;
-    mutacao.mutate();
+    setErro(null);
+    setConfirmarModalAberto(true);
   }
+
+  useEffect(() => {
+    if (!confirmarModalAberto) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        setConfirmarModalAberto(false);
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        e.stopPropagation();
+        setConfirmarModalAberto(false);
+        mutacao.mutate();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown, true);
+    return () => window.removeEventListener("keydown", handleKeyDown, true);
+  }, [confirmarModalAberto, mutacao]);
 
   return (
     <div className="flex h-full min-h-0 flex-col px-6 pt-5 pb-4">
@@ -277,7 +291,7 @@ export default function BaixaManualPage() {
 
               <button
                 type="button"
-                onClick={confirmar}
+                onClick={abrirConfirmacao}
                 disabled={mutacao.isPending || !novoStatus}
                 className="inline-flex h-10 w-full items-center justify-center gap-1.5 rounded-lg bg-amber px-4 text-sm font-medium text-void transition hover:brightness-110 disabled:opacity-60"
               >
@@ -292,6 +306,77 @@ export default function BaixaManualPage() {
           )}
         </div>
       </div>
+
+      {/* Modal Temático de Confirmação de Baixa Manual */}
+      {confirmarModalAberto && selecionado && (
+        <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/80 p-4 backdrop-blur-xs">
+          <div className="flex w-full max-w-md flex-col overflow-hidden rounded-2xl border border-amber/40 bg-surface shadow-2xl shadow-black/90">
+            <div className="flex items-center gap-3 border-b border-border bg-amber/10 px-5 py-3.5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-amber/40 bg-amber/20 text-amber">
+                <Wrench size={20} />
+              </div>
+              <div>
+                <h4 className="font-display text-sm font-bold text-white">
+                  Confirmar Baixa Manual
+                </h4>
+                <p className="font-mono text-[11px] text-amber">
+                  ID Any: {selecionado.id_any} {selecionado.pedido ? `• Pedido ${selecionado.pedido}` : ""}
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-3 p-5 text-xs">
+              <p className="leading-relaxed text-text">
+                Confirma a alteração manual de status deste pedido?
+              </p>
+
+              <div className="rounded-xl border border-border bg-elevated/50 p-3.5 space-y-2 text-[11px]">
+                <div className="flex items-center justify-between">
+                  <span className="text-text-muted">Status Atual:</span>
+                  <strong className="font-mono text-text">{selecionado.status_any || "—"}</strong>
+                </div>
+                <div className="flex items-center justify-between border-t border-border/60 pt-2">
+                  <span className="text-text-muted">Novo Status:</span>
+                  <strong className="font-mono text-amber font-bold">{novoStatus}</strong>
+                </div>
+                {observacao.trim() && (
+                  <div className="border-t border-border/60 pt-2">
+                    <span className="text-text-muted">Observação:</span>
+                    <p className="mt-0.5 text-text-faint italic">{observacao}</p>
+                  </div>
+                )}
+              </div>
+
+              <p className="text-[11px] text-text-faint">
+                Essa ação grava diretamente no banco de dados e gera um registro de auditoria na timeline.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 border-t border-border bg-elevated/60 px-5 py-3">
+              <button
+                type="button"
+                disabled={mutacao.isPending}
+                onClick={() => setConfirmarModalAberto(false)}
+                className="rounded-lg border border-border bg-surface px-3.5 py-1.5 text-xs font-medium text-text-muted transition hover:bg-elevated hover:text-text disabled:opacity-50"
+              >
+                Cancelar (Esc)
+              </button>
+              <button
+                type="button"
+                disabled={mutacao.isPending}
+                onClick={() => {
+                  setConfirmarModalAberto(false);
+                  mutacao.mutate();
+                }}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-amber px-4 py-1.5 font-display text-xs font-bold text-void shadow transition hover:brightness-110 active:brightness-95 disabled:opacity-50"
+              >
+                {mutacao.isPending ? <Loader2 size={13} className="animate-spin" /> : <Wrench size={13} />}
+                Sim, Confirmar (Enter)
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
