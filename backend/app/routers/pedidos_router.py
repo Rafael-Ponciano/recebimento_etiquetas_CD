@@ -320,6 +320,87 @@ def imprimir(
     return resultado
 
 
+class ConfirmarRomaneioRequest(BaseModel):
+    order_ids: list[str] = Field(..., min_length=1, description="Lista de IDs dos pedidos a despachar")
+    marketplace: str = Field(default="", description="Marketplace do romaneio")
+    transportadora: str = Field(default="", description="Nome da transportadora")
+    pedidos_detalhes: list[dict] = Field(default_factory=list, description="Detalhes de cada pedido no romaneio")
+
+
+@router.post("/despachos/confirmar-romaneio")
+def confirmar_despacho_romaneio(
+    body: ConfirmarRomaneioRequest,
+    user: AuthUser = Depends(get_current_user),
+):
+    try:
+        res = pedidos_service.confirmar_despacho_romaneio(
+            order_ids=body.order_ids,
+            usuario=user.nome or user.usuario,
+            marketplace=body.marketplace,
+            transportadora=body.transportadora,
+            pedidos_detalhes=body.pedidos_detalhes,
+        )
+        if not res.get("ok"):
+            raise HTTPException(
+                status_code=400,
+                detail=res.get("mensagem", "Falha ao confirmar despacho do romaneio"),
+            )
+        return res
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erro interno ao confirmar despacho do romaneio: {e}",
+        )
+
+
+@router.get("/despachos/romaneios")
+def listar_romaneios(
+    dias: int = Query(30, ge=1, le=180, description="Dias para trás a consultar"),
+    marketplace: str | None = Query(None, description="Filtro opcional por marketplace"),
+    refresh: bool = Query(False, description="Ignora cache em memória"),
+    _user: AuthUser = Depends(get_current_user),
+):
+    """Lista romaneios expedidos salvos no sistema."""
+    from .. import romaneios_service
+
+    try:
+        items = romaneios_service.listar_romaneios(
+            dias=dias,
+            marketplace=marketplace,
+            force_refresh=refresh,
+        )
+        return {"items": items, "total": len(items)}
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erro ao listar romaneios expedidos: {e}",
+        )
+
+
+@router.get("/despachos/romaneios/{codigo}")
+def obter_romaneio(
+    codigo: str,
+    _user: AuthUser = Depends(get_current_user),
+):
+    """Retorna dados completos de um romaneio expedido."""
+    from .. import romaneios_service
+
+    try:
+        r = romaneios_service.obter_romaneio(codigo)
+        if not r:
+            raise HTTPException(status_code=404, detail=f"Romaneio '{codigo}' não encontrado.")
+        return r
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erro ao obter romaneio: {e}",
+        )
+
+
 class RegistrarDespachoRequest(BaseModel):
     marketplace: str = Field(default="", description="Marketplace / transportadora do despacho")
     chave_nfe: str = Field(default="", description="Chave da NF-e (44 dígitos)")

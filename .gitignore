@@ -3,6 +3,7 @@ config.ini
 scripts/old_supabase.ini
 credenciais.json
 recebimento-sa-key.json
+dados/
 token_any.json
 anymarket_token.json
 conferencia_erro.log

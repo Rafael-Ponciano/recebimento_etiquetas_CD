@@ -16,11 +16,13 @@ from app.auth import get_current_user, AuthUser
 from app.pedidos_service import (
     TARGET_STATUSES,
     STATUS_AG_COLETA,
+    STATUS_ENVIADO,
     _status_pedido_fechado,
     _status_impressao_livre,
     _eh_status_imovel,
     registrar_despacho_pedido,
     estornar_despacho_pedido,
+    confirmar_despacho_romaneio,
 )
 
 
@@ -45,6 +47,19 @@ class TestDespachoInvariantesStatus(unittest.TestCase):
         """Conferência de bancada não pode reabrir um pedido já em Ag. Coleta."""
         self.assertTrue(_eh_status_imovel("Ag. Coleta"))
         self.assertTrue(_eh_status_imovel("ag. coleta"))
+
+    def test_enviado_em_status_pedido_fechado(self):
+        fechados = _status_pedido_fechado()
+        self.assertIn("enviado", fechados)
+
+    def test_enviado_em_status_impressao_livre(self):
+        livres = _status_impressao_livre()
+        self.assertIn("enviado", livres)
+
+    def test_enviado_eh_status_imovel(self):
+        """Conferência de bancada não pode alterar um pedido já Enviado."""
+        self.assertTrue(_eh_status_imovel("Enviado"))
+        self.assertTrue(_eh_status_imovel("enviado"))
 
 
 class TestDespachoService(unittest.TestCase):
@@ -140,6 +155,70 @@ class TestDespachoService(unittest.TestCase):
             self.assertFalse(res["ok"])
             self.assertIn("persistir", res["mensagem"].lower())
 
+    def test_confirmar_despacho_romaneio_vazio(self):
+        res = confirmar_despacho_romaneio([], usuario="operador_teste")
+        self.assertFalse(res["ok"])
+        self.assertIn("nenhum pedido", res["mensagem"].lower())
+
+    @patch("app.pedidos_service.log_evento")
+    @patch("app.pedidos_service._salvar_status_no_supabase", return_value=True)
+    @patch("app.pedidos_service._atualizar_status_local")
+    def test_confirmar_despacho_romaneio_sucesso(self, mock_atualizar, mock_salvar, mock_log):
+        with patch("app.pedidos_service._status_despacho_atual", return_value="Ag. Coleta"):
+            res = confirmar_despacho_romaneio(
+                ["11111", "22222"],
+                usuario="operador_teste",
+                marketplace="meli",
+                transportadora="Mercado Envios",
+            )
+            self.assertTrue(res["ok"])
+            self.assertEqual(res["total"], 2)
+            self.assertEqual(res["sucessos"], 2)
+            self.assertEqual(res["pedidos_atualizados"], ["11111", "22222"])
+            self.assertEqual(res["status_any"], STATUS_ENVIADO)
+            self.assertEqual(mock_salvar.call_count, 2)
+            self.assertEqual(mock_atualizar.call_count, 2)
+            mock_log.assert_called_once()
+            args, _ = mock_log.call_args
+            self.assertEqual(args[0], "operador_teste")
+            self.assertEqual(args[1], "DESPACHO_COLETADO")
+
+    @patch("app.pedidos_service.log_evento")
+    @patch("app.pedidos_service._salvar_status_no_supabase", return_value=True)
+    @patch("app.pedidos_service._atualizar_status_local")
+    def test_confirmar_despacho_romaneio_bloqueia_se_houver_cancelado(self, mock_atualizar, mock_salvar, mock_log):
+        def mock_status(oid):
+            return "Cancelado" if oid == "99999" else "Ag. Coleta"
+
+        with patch("app.pedidos_service._status_despacho_atual", side_effect=mock_status):
+            res = confirmar_despacho_romaneio(
+                ["11111", "99999"],
+                usuario="operador_teste",
+                marketplace="shopee",
+                transportadora="Shopee Xpress",
+            )
+            self.assertFalse(res["ok"])
+            self.assertTrue(res.get("bloqueio_cancelado"))
+            self.assertIn("bloqueio impeditivo", res["mensagem"].lower())
+            self.assertIn("99999", res["mensagem"])
+            mock_salvar.assert_not_called()
+            mock_atualizar.assert_not_called()
+            mock_log.assert_not_called()
+
+    @patch("app.pedidos_service.log_evento")
+    @patch("app.pedidos_service._salvar_status_no_supabase", return_value=False)
+    @patch("app.pedidos_service._atualizar_status_local")
+    def test_confirmar_despacho_romaneio_falha_persistencia(self, mock_atualizar, mock_salvar, mock_log):
+        with patch("app.pedidos_service._status_despacho_atual", return_value="Ag. Coleta"):
+            res = confirmar_despacho_romaneio(
+                ["11111"],
+                usuario="operador_teste",
+                marketplace="magalu",
+            )
+            self.assertFalse(res["ok"])
+            self.assertEqual(res["sucessos"], 0)
+            self.assertEqual(len(res["falhas"]), 1)
+
 
 class TestDespachoRotasAPI(unittest.TestCase):
     """Testa os endpoints HTTP FastAPI usando TestClient."""
@@ -209,6 +288,45 @@ class TestDespachoRotasAPI(unittest.TestCase):
         resp = self.client.get("/api/pedidos/despachos/recentes?limite=10")
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(len(resp.json()["items"]), 1)
+
+    @patch("app.pedidos_service.confirmar_despacho_romaneio")
+    def test_rota_confirmar_romaneio_sucesso(self, mock_servico):
+        mock_servico.return_value = {
+            "ok": True,
+            "total": 2,
+            "sucessos": 2,
+            "pedidos_atualizados": ["111", "222"],
+            "status_any": "Enviado",
+            "mensagem": "2 pedidos despachados com sucesso",
+        }
+        resp = self.client.post(
+            "/api/pedidos/despachos/confirmar-romaneio",
+            json={
+                "order_ids": ["111", "222"],
+                "marketplace": "meli",
+                "transportadora": "Mercado Envios",
+            },
+        )
+        self.assertEqual(resp.status_code, 200)
+        self.assertTrue(resp.json()["ok"])
+        self.assertEqual(resp.json()["status_any"], "Enviado")
+        self.assertEqual(resp.json()["sucessos"], 2)
+
+    @patch("app.pedidos_service.confirmar_despacho_romaneio")
+    def test_rota_confirmar_romaneio_rejeicao(self, mock_servico):
+        mock_servico.return_value = {
+            "ok": False,
+            "mensagem": "Nenhum pedido válido",
+        }
+        resp = self.client.post(
+            "/api/pedidos/despachos/confirmar-romaneio",
+            json={
+                "order_ids": ["999"],
+                "marketplace": "shopee",
+            },
+        )
+        self.assertEqual(resp.status_code, 400)
+        self.assertIn("nenhum pedido", resp.json()["detail"].lower())
 
 
 if __name__ == "__main__":

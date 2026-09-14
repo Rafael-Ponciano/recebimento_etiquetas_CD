@@ -1259,6 +1259,177 @@
         }
       }
     },
+    "/api/pedidos/despachos/confirmar-romaneio": {
+      "post": {
+        "tags": [
+          "pedidos"
+        ],
+        "summary": "Confirmar Despacho Romaneio",
+        "operationId": "confirmar_despacho_romaneio_api_pedidos_despachos_confirmar_romaneio_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmarRomaneioRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/pedidos/despachos/romaneios": {
+      "get": {
+        "tags": [
+          "pedidos"
+        ],
+        "summary": "Listar Romaneios",
+        "description": "Lista romaneios expedidos salvos no sistema.",
+        "operationId": "listar_romaneios_api_pedidos_despachos_romaneios_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "dias",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 180,
+              "minimum": 1,
+              "description": "Dias para trás a consultar",
+              "default": 30,
+              "title": "Dias"
+            },
+            "description": "Dias para trás a consultar"
+          },
+          {
+            "name": "marketplace",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filtro opcional por marketplace",
+              "title": "Marketplace"
+            },
+            "description": "Filtro opcional por marketplace"
+          },
+          {
+            "name": "refresh",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "Ignora cache em memória",
+              "default": false,
+              "title": "Refresh"
+            },
+            "description": "Ignora cache em memória"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pedidos/despachos/romaneios/{codigo}": {
+      "get": {
+        "tags": [
+          "pedidos"
+        ],
+        "summary": "Obter Romaneio",
+        "description": "Retorna dados completos de um romaneio expedido.",
+        "operationId": "obter_romaneio_api_pedidos_despachos_romaneios__codigo__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "codigo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Codigo"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/pedidos/{order_id}/registrar-despacho": {
       "post": {
         "tags": [
@@ -2396,6 +2567,45 @@
         },
         "type": "object",
         "title": "ConfigBody"
+      },
+      "ConfirmarRomaneioRequest": {
+        "properties": {
+          "order_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Order Ids",
+            "description": "Lista de IDs dos pedidos a despachar"
+          },
+          "marketplace": {
+            "type": "string",
+            "title": "Marketplace",
+            "description": "Marketplace do romaneio",
+            "default": ""
+          },
+          "transportadora": {
+            "type": "string",
+            "title": "Transportadora",
+            "description": "Nome da transportadora",
+            "default": ""
+          },
+          "pedidos_detalhes": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Pedidos Detalhes",
+            "description": "Detalhes de cada pedido no romaneio"
+          }
+        },
+        "type": "object",
+        "required": [
+          "order_ids"
+        ],
+        "title": "ConfirmarRomaneioRequest"
       },
       "EstornarDespachoRequest": {
         "properties": {
