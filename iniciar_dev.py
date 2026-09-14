@@ -69,7 +69,7 @@ def _aguardar_porta(porta: int, timeout: float = 60.0) -> bool:
     return False
 
 def _reload_habilitado() -> bool:
-    return os.environ.get("DEV_RELOAD", "").strip().lower() in {"1", "true", "yes", "on"}
+    return os.environ.get("DEV_RELOAD", "1").strip().lower() in {"1", "true", "yes", "on"}
 
 def _popen_kwargs() -> dict:
 
