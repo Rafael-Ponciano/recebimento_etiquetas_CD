@@ -217,6 +217,33 @@ export default function DespachoDemoPage() {
   const [confirmandoDespacho, setConfirmandoDespacho] = useState(false);
   const [confirmarRomaneioAberto, setConfirmarRomaneioAberto] = useState(false);
 
+  // Modal para confirmar desfazer conferência/estorno
+  const [pedidoParaEstorno, setPedidoParaEstorno] = useState<PedidoDespacho | null>(null);
+  const executarEstornoRef = useRef<(p: PedidoDespacho) => Promise<void>>(() => Promise.resolve());
+
+  // Trava teclado e atalhos quando o modal de desfazer conferência estiver aberto
+  useEffect(() => {
+    if (!pedidoParaEstorno) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        setPedidoParaEstorno(null);
+        window.setTimeout(() => inputRef.current?.focus(), 50);
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        e.stopPropagation();
+        const p = pedidoParaEstorno;
+        setPedidoParaEstorno(null);
+        void executarEstornoRef.current(p);
+      } else {
+        e.stopPropagation();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown, true);
+    return () => window.removeEventListener("keydown", handleKeyDown, true);
+  }, [pedidoParaEstorno]);
+
   // Trava / Modal de Bloqueio Impeditivo da Bipagem
   const [bloqueioAtivo, setBloqueioAtivo] = useState<BloqueioBip | null>(null);
 
@@ -250,10 +277,16 @@ export default function DespachoDemoPage() {
 
   // Foco permanente no input de bipagem sempre que estiver dentro de uma transportadora (se nenhum modal estiver aberto)
   useEffect(() => {
-    if (transportadoraAtivaId && !bloqueioAtivo && !confirmarRomaneioAberto && !romaneioMkp) {
+    if (
+      transportadoraAtivaId &&
+      !bloqueioAtivo &&
+      !confirmarRomaneioAberto &&
+      !romaneioMkp &&
+      !pedidoParaEstorno
+    ) {
       inputRef.current?.focus();
     }
-  }, [transportadoraAtivaId, ultimoResultado, bloqueioAtivo, confirmarRomaneioAberto, romaneioMkp]);
+  }, [transportadoraAtivaId, ultimoResultado, bloqueioAtivo, confirmarRomaneioAberto, romaneioMkp, pedidoParaEstorno]);
 
   // Sincroniza dados do backend com a lista de pedidos da expedição
   useEffect(() => {
@@ -644,15 +677,8 @@ export default function DespachoDemoPage() {
   };
 
   // Desfazer conferência/despacho (retira da prateleira e volta para Conferido na bancada)
-  const estornarPedido = async (pedido: PedidoDespacho) => {
+  const executarEstorno = async (pedido: PedidoDespacho) => {
     const pedidoId = pedido.id;
-    const confirmou = window.confirm(
-      `Deseja desfazer a conferência/despacho do pedido ${pedido.pedido}?\n\n` +
-        `• O pedido sairá da prateleira de embarque\n` +
-        `• O status voltará para Conferido\n` +
-        `• Ficará disponível novamente para aguardar bipagem`
-    );
-    if (!confirmou) return;
 
     // Atualização otimista imediata (0ms de espera no feedback)
     setProcessandoEstorno(pedidoId);
@@ -705,8 +731,10 @@ export default function DespachoDemoPage() {
       });
     } finally {
       setProcessandoEstorno(null);
+      window.setTimeout(() => inputRef.current?.focus(), 50);
     }
   };
+  executarEstornoRef.current = executarEstorno;
 
   const atualizarPedidos = () => {
     void Promise.all([recarregarPedidos(), recarregarDespachos()]);
@@ -1449,7 +1477,7 @@ export default function DespachoDemoPage() {
                               <td className="px-3 py-2 text-right">
                                 <button
                                   type="button"
-                                  onClick={() => estornarPedido(p)}
+                                  onClick={() => setPedidoParaEstorno(p)}
                                   disabled={processandoEstorno === p.id}
                                   className="inline-flex items-center gap-1 rounded-md border border-amber/30 bg-amber/10 px-2 py-0.5 text-[10px] font-semibold text-amber transition hover:border-amber/50 hover:bg-amber/20 disabled:cursor-wait disabled:opacity-50"
                                   title="Desfazer conferência deste pedido e retirar da prateleira"
@@ -1714,6 +1742,77 @@ export default function DespachoDemoPage() {
                     Sim, Confirmar Despacho
                   </>
                 )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Confirmação para Desfazer Conferência / Estorno da Prateleira */}
+      {pedidoParaEstorno && (
+        <div className="despacho-nao-imprimir fixed inset-0 z-60 flex items-center justify-center bg-black/80 p-4 backdrop-blur-xs">
+          <div className="flex w-full max-w-md flex-col overflow-hidden rounded-2xl border border-amber/40 bg-surface shadow-2xl shadow-black/90">
+            <div className="flex items-center gap-3 border-b border-border bg-amber/10 px-5 py-3.5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-amber/40 bg-amber/20 text-amber">
+                <Undo2 size={20} />
+              </div>
+              <div>
+                <h4 className="font-display text-sm font-bold text-white">
+                  Desfazer Conferência de Despacho
+                </h4>
+                <p className="font-mono text-[11px] text-amber">
+                  Pedido {pedidoParaEstorno.pedido} {pedidoParaEstorno.nf ? `• NF ${pedidoParaEstorno.nf}` : ""}
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-3 p-5 text-xs">
+              <p className="leading-relaxed text-text">
+                Deseja realmente retirar o pedido <strong className="font-bold text-white">{pedidoParaEstorno.pedido}</strong> da prateleira de embarque?
+              </p>
+              <div className="space-y-2 rounded-xl border border-border bg-elevated/50 p-3.5 text-[11px] text-text-muted">
+                <div className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber shrink-0" />
+                  <span>O pedido sairá da prateleira de embarque</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber shrink-0" />
+                  <span>O status voltará para <strong className="text-text">Conferido</strong></span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber shrink-0" />
+                  <span>Ficará disponível novamente para aguardar bipagem</span>
+                </div>
+              </div>
+              {pedidoParaEstorno.cliente && (
+                <p className="truncate text-[11px] text-text-faint">
+                  Cliente: <span className="text-text-muted">{pedidoParaEstorno.cliente}</span>
+                </p>
+              )}
+            </div>
+
+            <div className="flex items-center justify-end gap-2 border-t border-border bg-elevated/60 px-5 py-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setPedidoParaEstorno(null);
+                  window.setTimeout(() => inputRef.current?.focus(), 50);
+                }}
+                className="rounded-lg border border-border bg-surface px-3.5 py-1.5 text-xs font-medium text-text-muted transition hover:bg-elevated hover:text-text"
+              >
+                Cancelar (Esc)
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const p = pedidoParaEstorno;
+                  setPedidoParaEstorno(null);
+                  void executarEstorno(p);
+                }}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-amber px-4 py-1.5 font-display text-xs font-bold text-void shadow transition hover:brightness-110 active:brightness-95"
+              >
+                <Undo2 size={13} />
+                Sim, Desfazer (Enter)
               </button>
             </div>
           </div>
