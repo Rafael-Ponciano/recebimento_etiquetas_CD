@@ -58,6 +58,7 @@ export function statusLiberamImpressao(r: RegrasNegocio): string[] {
     "Recebido",
     "Ag. Coleta",
     "Ag. Coleta CD",
+    "Enviado",
   ];
   if (r.imprimir_em_parcial) {
     base.push(r.status_parcial, "Recebido Parcial");
@@ -98,6 +99,7 @@ export function ehStatusFechadoCd(status: string | undefined, r: RegrasNegocio):
     "FEITO",
     "Ag. Coleta",
     "Ag. Coleta CD",
+    "Enviado",
   ].includes(status);
 }
 

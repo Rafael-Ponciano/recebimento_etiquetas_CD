@@ -95,6 +95,7 @@ TARGET_STATUSES = [
 STATUS_CONFERIDO = "Conferido"
 STATUS_RECEBIDO = "Recebido"
 STATUS_AG_COLETA = "Ag. Coleta"
+STATUS_ENVIADO = "Enviado"
 STATUS_FORA_FILA = frozenset({"Entregue", "Enviado"})
 STATUS_LOTE_CONFERIR = frozenset({"em separação", "a conferir"})
 SELLER_AGUARDANDO = "Aguardando Vendedor"
@@ -167,7 +168,7 @@ def _sheets_parcial() -> str:
     return settings.sheets_status_parcial
 
 def _status_impressao_livre() -> frozenset[str]:
-    base = {"conferido", "recebido", "feito", "ag ajuste", "ag. coleta", "ag. coleta cd"}
+    base = {"conferido", "recebido", "feito", "ag ajuste", "ag. coleta", "ag. coleta cd", "enviado"}
     base.add(_status_coleta_hoje().casefold())
     base.add(_status_agendado().casefold())
     base.add(_sheets_feito().casefold())
@@ -185,6 +186,7 @@ def _status_pedido_fechado() -> frozenset[str]:
             "ag ajuste",
             "ag. coleta",
             "ag. coleta cd",
+            "enviado",
             _status_coleta_hoje().casefold(),
             _status_agendado().casefold(),
             _sheets_feito().casefold(),
@@ -3890,6 +3892,169 @@ def estornar_despacho_pedido(
     }
 
 
+def confirmar_despacho_romaneio(
+    order_ids: list[str],
+    usuario: str,
+    marketplace: str = "",
+    transportadora: str = "",
+    pedidos_detalhes: list[dict] | None = None,
+) -> dict:
+    """Confirma coleta física pela transportadora de todos os pedidos do romaneio,
+    atualizando o status dos pedidos para 'Enviado' e gravando o snapshot oficial do romaneio.
+
+    BLOQUEIO IMPEDITIVO: Se houver qualquer pedido cancelado no romaneio, a operação
+    é inteiramente bloqueada até que o operador retire o pacote físico da prateleira.
+    """
+    if not order_ids:
+        return {"ok": False, "mensagem": "Nenhum pedido informado para confirmação do despacho."}
+
+    ids_normalizados: list[str] = []
+    vistos: set[str] = set()
+    for raw_id in order_ids:
+        oid = _norm_id_any(raw_id)
+        if oid and oid not in vistos:
+            vistos.add(oid)
+            ids_normalizados.append(oid)
+
+    if not ids_normalizados:
+        return {"ok": False, "mensagem": "Nenhum ID de pedido válido informado."}
+
+    # Validação de segurança prévia: bloqueia se houver pedidos cancelados no romaneio
+    pedidos_cancelados: list[str] = []
+    for oid in ids_normalizados:
+        atual = _status_despacho_atual(oid)
+        if _eh_status_cancelado(atual):
+            info = f"Pedido {oid}"
+            try:
+                linhas = _linha_df_pedido(oid)
+                if linhas is not None and not linhas.empty:
+                    ped_num = str(linhas.iloc[0].get("Pedido") or "").strip()
+                    nf_venda = str(linhas.iloc[0].get("NF Venda") or "").strip()
+                    partes = []
+                    if ped_num and ped_num != oid:
+                        partes.append(f"Nº {ped_num}")
+                    if nf_venda and nf_venda.casefold() not in {"nan", "none", "", "null"}:
+                        partes.append(f"NF {nf_venda}")
+                    if partes:
+                        info += f" ({', '.join(partes)})"
+            except Exception:
+                pass
+            pedidos_cancelados.append(info)
+
+    if pedidos_cancelados:
+        lista_str = ", ".join(pedidos_cancelados)
+        return {
+            "ok": False,
+            "bloqueio_cancelado": True,
+            "pedidos_cancelados": pedidos_cancelados,
+            "mensagem": (
+                f"BLOQUEIO IMPEDITIVO: Consta(m) pacote(s) CANCELADO(S) no romaneio: {lista_str}. "
+                "Localize e retire o(s) pacote(s) físico(s) da prateleira de coleta antes de confirmar o despacho!"
+            ),
+        }
+
+    sucessos: list[str] = []
+    falhas: list[dict[str, str]] = []
+
+    for oid in ids_normalizados:
+        try:
+            if not _salvar_status_no_supabase(oid, STATUS_ENVIADO, exigir_linha=False):
+                falhas.append({"id": oid, "motivo": "Falha ao persistir status no Supabase"})
+                continue
+            _atualizar_status_local(oid, STATUS_ENVIADO)
+            sucessos.append(oid)
+        except Exception as e:
+            falhas.append({"id": oid, "motivo": str(e)})
+
+    agora_iso = datetime.now(timezone.utc).isoformat()
+
+    from . import romaneios_service
+
+    codigo_romaneio = romaneios_service.gerar_codigo_romaneio(marketplace)
+
+    detalhes_por_id: dict[str, dict] = {
+        _norm_id_any(d.get("id")): d
+        for d in (pedidos_detalhes or [])
+        if isinstance(d, dict) and d.get("id")
+    }
+
+    pedidos_snapshot: list[dict] = []
+    for oid in sucessos:
+        d = detalhes_por_id.get(oid, {})
+        ped_num = str(d.get("pedido") or "").strip()
+        nf_v = str(d.get("nf") or "").strip()
+        cli = str(d.get("cliente") or "").strip()
+        tc = str(d.get("tipo_coleta") or "coleta_hoje").strip()
+        hb = str(d.get("horario_bip") or "").strip()
+
+        if not ped_num or not nf_v or not cli or nf_v == "—":
+            try:
+                linhas = _linha_df_pedido(oid)
+                if linhas is not None and not linhas.empty:
+                    if not ped_num:
+                        ped_num = str(linhas.iloc[0].get("Pedido") or oid)
+                    if not nf_v or nf_v == "—":
+                        val_nf = str(linhas.iloc[0].get("NF Venda") or "")
+                        if val_nf.casefold() not in {"nan", "none", "null", ""}:
+                            nf_v = val_nf
+                    if not cli:
+                        cli = str(linhas.iloc[0].get("Cliente") or "Cliente não informado")
+            except Exception:
+                pass
+
+        pedidos_snapshot.append(
+            {
+                "id": oid,
+                "pedido": ped_num or oid,
+                "nf": nf_v or "—",
+                "cliente": cli or "Cliente não informado",
+                "tipo_coleta": tc,
+                "horario_bip": hb,
+            }
+        )
+
+    if sucessos:
+        romaneios_service.salvar_romaneio(
+            codigo_romaneio=codigo_romaneio,
+            marketplace=marketplace,
+            transportadora=transportadora,
+            operador=usuario,
+            pedidos=pedidos_snapshot,
+            confirmado_em=agora_iso,
+        )
+
+    detalhes_json = json.dumps(
+        {
+            "codigo_romaneio": codigo_romaneio,
+            "marketplace": marketplace,
+            "transportadora": transportadora,
+            "total_informados": len(ids_normalizados),
+            "total_sucesso": len(sucessos),
+            "pedidos": sucessos,
+            "falhas": falhas,
+            "confirmado_em": agora_iso,
+        }
+    )
+    log_evento(usuario, "DESPACHO_COLETADO", detalhes_json, codigo_romaneio)
+
+    msg = f"{len(sucessos)} de {len(ids_normalizados)} pedidos despachados com sucesso para {transportadora or marketplace or 'a transportadora'}."
+    if falhas:
+        msg += f" {len(falhas)} pedido(s) com erro ao salvar."
+
+    return {
+        "ok": len(sucessos) > 0,
+        "codigo_romaneio": codigo_romaneio,
+        "total": len(ids_normalizados),
+        "sucessos": len(sucessos),
+        "pedidos_atualizados": sucessos,
+        "falhas": falhas,
+        "status_any": STATUS_ENVIADO,
+        "confirmado_em": agora_iso,
+        "operador": usuario,
+        "mensagem": msg,
+    }
+
+
 def consultar_despachos_recentes(limite: int = 500) -> list[dict]:
     """Retorna despachos recentes da tabela logs para alimentar a tela de Despacho."""
     try:
@@ -3897,7 +4062,7 @@ def consultar_despachos_recentes(limite: int = 500) -> list[dict]:
         resp = executar_com_retry(
             lambda: client.table("logs")
             .select("id, usuario, tipo_acao, detalhes, pedido_id, created_at")
-            .in_("tipo_acao", ["DESPACHO", "DESPACHO_ESTORNO"])
+            .in_("tipo_acao", ["DESPACHO", "DESPACHO_ESTORNO", "DESPACHO_COLETADO"])
             .order("id", desc=True)
             .limit(limite)
             .execute()

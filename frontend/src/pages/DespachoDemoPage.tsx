@@ -23,6 +23,7 @@ import {
   ArrowLeft,
   Search,
 } from "lucide-react";
+import RomaneiosExpedidosTab from "../components/RomaneiosExpedidosTab";
 
 // Definição dos 4 Marketplaces / Canais de Expedição oficiais
 type MarketplaceId = "meli" | "shopee" | "magalu" | "total_express";
@@ -83,6 +84,17 @@ interface PedidoDespacho {
   tipoColeta: TipoColeta;
   horarioDespacho?: string;
   operadorDespacho?: string;
+}
+
+interface BloqueioBip {
+  tipo: "duplicado" | "nao_localizado" | "outro_mkp" | "cancelado" | "pendente" | "agendado_sem_nf" | "erro_servidor";
+  titulo: string;
+  mensagem: string;
+  orientacao: string;
+  codigoLido?: string;
+  pedido?: PedidoDespacho;
+  mkpEsperado?: string;
+  mkpPacote?: string;
 }
 
 function normalizarNumeroNf(valor: string): string {
@@ -179,6 +191,9 @@ export default function DespachoDemoPage() {
     staleTime: 15_000,
   });
 
+  // Sub-aba ativa na visualização principal ("postos" = postos de bipagem, "romaneios" = histórico expedido)
+  const [abaAtiva, setAbaAtiva] = useState<"postos" | "romaneios">("postos");
+
   // Transportadora selecionada para a tela de conferência dedicada
   // Se null -> exibe a tela principal com os 4 cards
   const [transportadoraAtivaId, setTransportadoraAtivaId] = useState<MarketplaceId | null>(null);
@@ -199,18 +214,46 @@ export default function DespachoDemoPage() {
   // Modal de Romaneio
   const [romaneioMkp, setRomaneioMkp] = useState<MarketplaceId | null>(null);
   const [processandoEstorno, setProcessandoEstorno] = useState<string | null>(null);
+  const [confirmandoDespacho, setConfirmandoDespacho] = useState(false);
+  const [confirmarRomaneioAberto, setConfirmarRomaneioAberto] = useState(false);
+
+  // Trava / Modal de Bloqueio Impeditivo da Bipagem
+  const [bloqueioAtivo, setBloqueioAtivo] = useState<BloqueioBip | null>(null);
+
+  const fecharBloqueio = () => {
+    setBloqueioAtivo(null);
+    setCodigoInput("");
+    window.setTimeout(() => inputRef.current?.focus(), 50);
+  };
+
+  // Trava teclado: enquanto o modal de bloqueio estiver aberto, Enter/Espaço/Esc fecha o modal;
+  // qualquer outro caractere disparado pelo leitor ótico é bloqueado.
+  useEffect(() => {
+    if (!bloqueioAtivo) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " " || e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        fecharBloqueio();
+      } else {
+        e.stopPropagation();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown, true);
+    return () => window.removeEventListener("keydown", handleKeyDown, true);
+  }, [bloqueioAtivo]);
 
   // Registros locais de bipagem e estorno para evitar que refetches em segundo plano
   // revertam o estado da linha e causem efeito de "piscada" na tabela
   const despachadosLocalRef = useRef<Map<string, { horario: string; operador: string }>>(new Map());
   const estornadosLocalRef = useRef<Set<string>>(new Set());
 
-  // Foco permanente no input de bipagem sempre que estiver dentro de uma transportadora
+  // Foco permanente no input de bipagem sempre que estiver dentro de uma transportadora (se nenhum modal estiver aberto)
   useEffect(() => {
-    if (transportadoraAtivaId) {
+    if (transportadoraAtivaId && !bloqueioAtivo && !confirmarRomaneioAberto && !romaneioMkp) {
       inputRef.current?.focus();
     }
-  }, [transportadoraAtivaId, ultimoResultado]);
+  }, [transportadoraAtivaId, ultimoResultado, bloqueioAtivo, confirmarRomaneioAberto, romaneioMkp]);
 
   // Sincroniza dados do backend com a lista de pedidos da expedição
   useEffect(() => {
@@ -398,6 +441,8 @@ export default function DespachoDemoPage() {
     const codigo = codigoOriginal.trim();
     if (!codigo) return;
     if (!transportadoraAtivaId) return;
+    if (bloqueioAtivo) return;
+
     if (bipEmAndamentoRef.current) {
       if (somHabilitado) tocarBeep("aviso");
       setUltimoResultado({
@@ -454,12 +499,14 @@ export default function DespachoDemoPage() {
 
     if (!pedidoEncontrado) {
       if (somHabilitado) tocarBeep("erro");
-      setUltimoResultado({
-        tipo: "erro",
-        mensagem: "CÓDIGO NÃO LOCALIZADO",
-        detalhe: nfExtraida
-          ? `Chave NF-e lida (NF ${nfExtraida}), mas nenhum pedido com essa NF foi encontrado.`
-          : `Nenhum pedido encontrado para "${codigo}".`,
+      setBloqueioAtivo({
+        tipo: "nao_localizado",
+        titulo: "CÓDIGO NÃO LOCALIZADO NO SISTEMA",
+        mensagem: nfExtraida
+          ? `Chave NF-e lida com NF ${nfExtraida}, mas nenhum pedido correspondente foi encontrado para o dia de hoje.`
+          : `Nenhum pedido foi encontrado para o código lido "${codigo}".`,
+        orientacao: "Separe esta caixa física da bancada. Ela NÃO foi registrada na prateleira de coleta e deve ser verificada com a supervisão.",
+        codigoLido: codigo,
       });
       return;
     }
@@ -468,21 +515,40 @@ export default function DespachoDemoPage() {
     if (pedidoEncontrado.marketplace !== transportadoraAtivaId) {
       if (somHabilitado) tocarBeep("erro");
       const mkpPedido = MARKETPLACES[pedidoEncontrado.marketplace];
-      setUltimoResultado({
-        tipo: "erro",
-        mensagem: `PACOTE DE OUTRA TRANSPORTADORA! (${mkpPedido.nome.toUpperCase()})`,
-        detalhe: `Este pacote pertence ao ${mkpPedido.nome}. Você está conferindo exclusivamente ${transportadoraAtiva.nome}.`,
+      setBloqueioAtivo({
+        tipo: "outro_mkp",
+        titulo: `PACOTE DE OUTRA TRANSPORTADORA! (${mkpPedido.nome.toUpperCase()})`,
+        mensagem: `Este pacote pertence ao canal ${mkpPedido.nome} (${mkpPedido.nomeTransportadora}). Você está conferindo exclusivamente ${transportadoraAtiva.nome}.`,
+        orientacao: `NÃO COLOQUE NA PRATELEIRA! Separe esta caixa e leve-a para o posto de coleta correto de ${mkpPedido.nome}.`,
+        codigoLido: codigo,
         pedido: pedidoEncontrado,
+        mkpEsperado: transportadoraAtiva.nome,
+        mkpPacote: mkpPedido.nome,
       });
       return;
     }
 
     if (pedidoEncontrado.status === "Cancelado") {
       if (somHabilitado) tocarBeep("erro");
-      setUltimoResultado({
-        tipo: "erro",
-        mensagem: "PEDIDO CANCELADO — NÃO LEVE À PRATELEIRA!",
-        detalhe: `O pedido ${pedidoEncontrado.pedido} foi cancelado. Separe o pacote para devolução imediata.`,
+      setBloqueioAtivo({
+        tipo: "cancelado",
+        titulo: "PEDIDO CANCELADO — RETENHA O PACOTE!",
+        mensagem: `O pedido ${pedidoEncontrado.pedido} (NF ${pedidoEncontrado.nf}) foi cancelado pelo cliente ou marketplace.`,
+        orientacao: "NÃO ENVIE À TRANSPORTADORA! Segure esta caixa física e encaminhe-a imediatamente para desmanche e devolução ao estoque.",
+        codigoLido: codigo,
+        pedido: pedidoEncontrado,
+      });
+      return;
+    }
+
+    if (pedidoEncontrado.status === "Ag. Embarque") {
+      if (somHabilitado) tocarBeep("erro");
+      setBloqueioAtivo({
+        tipo: "duplicado",
+        titulo: "ALERTA DE DUPLICIDADE — PACOTE JÁ REGISTRADO!",
+        mensagem: `O pedido ${pedidoEncontrado.pedido} (NF ${pedidoEncontrado.nf}) já havia sido bipado às ${pedidoEncontrado.horarioDespacho || "—"} por ${pedidoEncontrado.operadorDespacho || "outro operador"}.`,
+        orientacao: "RISCO DE ENVIO DUPLICADO! Verifique se já existe outra caixa física na prateleira com esta mesma etiqueta colada antes de liberar.",
+        codigoLido: codigo,
         pedido: pedidoEncontrado,
       });
       return;
@@ -490,10 +556,12 @@ export default function DespachoDemoPage() {
 
     if (pedidoEncontrado.status === "Pendente") {
       if (somHabilitado) tocarBeep("erro");
-      setUltimoResultado({
-        tipo: "erro",
-        mensagem: "PEDIDO NÃO CONFERIDO!",
-        detalhe: `O pedido ${pedidoEncontrado.pedido} ainda não teve conferência física na bancada.`,
+      setBloqueioAtivo({
+        tipo: "pendente",
+        titulo: "PEDIDO NÃO CONFERIDO NA BANCADA!",
+        mensagem: `O pedido ${pedidoEncontrado.pedido} (NF ${pedidoEncontrado.nf}) ainda não passou pela conferência física de itens.`,
+        orientacao: "NÃO LEVE À PRATELEIRA! Esta caixa física foi embalada sem conferência. Encaminhe o pacote para a bancada de conferência.",
+        codigoLido: codigo,
         pedido: pedidoEncontrado,
       });
       return;
@@ -501,21 +569,12 @@ export default function DespachoDemoPage() {
 
     if (pedidoEncontrado.tipoColeta === "agendado_sem_conferencia") {
       if (somHabilitado) tocarBeep("erro");
-      setUltimoResultado({
-        tipo: "erro",
-        mensagem: "PEDIDO AGENDADO SEM NF",
-        detalhe: `O pedido ${pedidoEncontrado.pedido} ainda não está liberado para a prateleira de coleta.`,
-        pedido: pedidoEncontrado,
-      });
-      return;
-    }
-
-    if (pedidoEncontrado.status === "Ag. Embarque") {
-      if (somHabilitado) tocarBeep("aviso");
-      setUltimoResultado({
-        tipo: "aviso",
-        mensagem: "PACOTE JÁ BIPADO!",
-        detalhe: `Bipado às ${pedidoEncontrado.horarioDespacho || "—"} por ${pedidoEncontrado.operadorDespacho || "operador"} e enviado à prateleira.`,
+      setBloqueioAtivo({
+        tipo: "agendado_sem_nf",
+        titulo: "PEDIDO AGENDADO SEM NOTA FISCAL!",
+        mensagem: `O pedido ${pedidoEncontrado.pedido} é agendado e ainda não possui emissão de NF de venda vinculada.`,
+        orientacao: "NÃO LEVE À PRATELEIRA! Pedidos agendados sem emissão de NF não estão liberados para a coleta de hoje.",
+        codigoLido: codigo,
         pedido: pedidoEncontrado,
       });
       return;
@@ -549,8 +608,8 @@ export default function DespachoDemoPage() {
         )
       );
 
-      queryClient.invalidateQueries({ queryKey: ["pedidos"] });
-      queryClient.invalidateQueries({ queryKey: ["despachos-recentes"] });
+      void queryClient.invalidateQueries({ queryKey: ["pedidos"] });
+      void queryClient.invalidateQueries({ queryKey: ["despachos-recentes"] });
 
       if (somHabilitado) tocarBeep("sucesso");
       setUltimoResultado({
@@ -561,14 +620,18 @@ export default function DespachoDemoPage() {
       });
     } catch (err: any) {
       if (somHabilitado) tocarBeep("erro");
-      setUltimoResultado({
-        tipo: "erro",
-        mensagem: "ERRO AO REGISTRAR DESPACHO",
-        detalhe: err?.response?.data?.detail || err?.message || "Falha na comunicação com o servidor.",
+      const detalheErro = err?.response?.data?.detail || err?.message || "Falha na comunicação com o servidor.";
+      setBloqueioAtivo({
+        tipo: "erro_servidor",
+        titulo: "ERRO AO REGISTRAR DESPACHO NO SERVIDOR",
+        mensagem: `Não foi possível registrar o despacho do pedido ${pedidoEncontrado.pedido}.`,
+        orientacao: `${detalheErro}. Verifique a conexão com o servidor e tente bipar novamente.`,
+        codigoLido: codigo,
         pedido: pedidoEncontrado,
       });
     } finally {
       bipEmAndamentoRef.current = false;
+      setCodigoInput("");
       window.setTimeout(() => inputRef.current?.focus(), 0);
     }
   };
@@ -660,6 +723,65 @@ export default function DespachoDemoPage() {
     window.setTimeout(limparModoImpressao, 1_000);
   };
 
+  const confirmarDespachoRomaneio = async () => {
+    if (!romaneioMkp || pedidosDoRomaneio.length === 0 || confirmandoDespacho) return;
+    const mkpInfo = MARKETPLACES[romaneioMkp];
+    const orderIds = pedidosDoRomaneio.map((p) => p.id);
+
+    try {
+      setConfirmandoDespacho(true);
+      const pedidosDetalhes = pedidosDoRomaneio.map((p) => ({
+        id: p.id,
+        pedido: p.pedido,
+        nf: p.nf,
+        cliente: p.cliente,
+        tipo_coleta: p.tipoColeta,
+        horario_bip: p.horarioDespacho || "",
+        operador_bip: p.operadorDespacho || "",
+      }));
+
+      const resp = await api.post<{ ok: boolean; codigo_romaneio?: string; total_sucesso?: number }>(
+        "/pedidos/despachos/confirmar-romaneio",
+        {
+          order_ids: orderIds,
+          marketplace: romaneioMkp,
+          transportadora: mkpInfo.nomeTransportadora,
+          pedidos_detalhes: pedidosDetalhes,
+        }
+      );
+
+      orderIds.forEach((id) => despachadosLocalRef.current.delete(id));
+
+      void queryClient.invalidateQueries({ queryKey: ["pedidos"] });
+      void queryClient.invalidateQueries({ queryKey: ["despachos-recentes"] });
+      void queryClient.invalidateQueries({ queryKey: ["romaneios-expedidos"] });
+
+      if (somHabilitado) tocarBeep("sucesso");
+      const codRomaneio = resp.data?.codigo_romaneio ? ` [${resp.data.codigo_romaneio}]` : "";
+      setUltimoResultado({
+        tipo: "sucesso",
+        mensagem: `DESPACHO COLETADO COM SUCESSO!${codRomaneio}`,
+        detalhe: `${orderIds.length} pedidos confirmados como Enviados para ${mkpInfo.nomeTransportadora}. Romaneio registrado no histórico.`,
+      });
+
+      setConfirmarRomaneioAberto(false);
+      setRomaneioMkp(null);
+    } catch (err: any) {
+      if (somHabilitado) tocarBeep("erro");
+      setConfirmarRomaneioAberto(false);
+      const msgErro = err?.response?.data?.detail || err?.message || "Falha ao persistir status Enviado dos pedidos.";
+      const ehBloqueio = msgErro.toLowerCase().includes("bloqueio") || msgErro.toLowerCase().includes("cancelado");
+      setUltimoResultado({
+        tipo: "erro",
+        mensagem: ehBloqueio ? "BLOQUEIO IMPEDITIVO — PACOTE CANCELADO" : "ERRO AO CONFIRMAR DESPACHO",
+        detalhe: msgErro,
+      });
+      void queryClient.invalidateQueries({ queryKey: ["pedidos"] });
+    } finally {
+      setConfirmandoDespacho(false);
+    }
+  };
+
   // Pedidos para o Romaneio de Coleta oficial
   const pedidosDoRomaneio = useMemo(() => {
     if (!romaneioMkp) return [];
@@ -740,6 +862,35 @@ export default function DespachoDemoPage() {
 
         {/* Controles de Apoio */}
         <div className="flex items-center gap-2">
+          {!transportadoraAtivaId && (
+            <div className="mr-2 flex items-center rounded-lg border border-border bg-elevated p-0.5 text-xs">
+              <button
+                type="button"
+                onClick={() => setAbaAtiva("postos")}
+                className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1 font-medium transition ${
+                  abaAtiva === "postos"
+                    ? "bg-surface text-amber font-semibold shadow-xs"
+                    : "text-text-muted hover:text-text"
+                }`}
+              >
+                <Truck size={13} />
+                Postos de Bipagem
+              </button>
+              <button
+                type="button"
+                onClick={() => setAbaAtiva("romaneios")}
+                className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1 font-medium transition ${
+                  abaAtiva === "romaneios"
+                    ? "bg-surface text-amber font-semibold shadow-xs"
+                    : "text-text-muted hover:text-text"
+                }`}
+              >
+                <FileSpreadsheet size={13} />
+                Romaneios Expedidos
+              </button>
+            </div>
+          )}
+
           <button
             type="button"
             onClick={() => setSomHabilitado(!somHabilitado)}
@@ -782,9 +933,13 @@ export default function DespachoDemoPage() {
       )}
 
       {/* ========================================================================= */}
-      {/* CENÁRIO 1: TELA PRINCIPAL COM OS CARDS DAS TRANSPORTADORAS               */}
+      {/* CENÁRIO 1: TELA PRINCIPAL (POSTOS OU HISTÓRICO DE ROMANEIOS)             */}
       {/* ========================================================================= */}
-      {!transportadoraAtivaId && (
+      {!transportadoraAtivaId && abaAtiva === "romaneios" && (
+        <RomaneiosExpedidosTab />
+      )}
+
+      {!transportadoraAtivaId && abaAtiva === "postos" && (
         <div className="flex flex-1 flex-col overflow-hidden">
           {/* Resumo das prateleiras de coleta */}
           <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-border/60 bg-surface/30 px-4 py-2.5 sm:px-6">
@@ -1451,21 +1606,243 @@ export default function DespachoDemoPage() {
             </div>
 
             {/* Rodapé do Modal */}
-            <div className="despacho-nao-imprimir flex shrink-0 items-center justify-end gap-2.5 border-t border-border-soft bg-elevated/60 px-5 py-2.5">
+            <div className="despacho-nao-imprimir flex shrink-0 items-center justify-between gap-2.5 border-t border-border-soft bg-elevated/60 px-5 py-2.5">
+              <div className="text-[11px] text-text-faint">
+                {pedidosDoRomaneio.length > 0 ? (
+                  <span>
+                    Pronto para coleta: <strong className="font-mono font-bold text-white">{pedidosDoRomaneio.length}</strong> {pedidosDoRomaneio.length === 1 ? "pedido" : "pedidos"}
+                  </span>
+                ) : (
+                  <span>Nenhum pedido bipado neste romaneio</span>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setConfirmarRomaneioAberto(false);
+                    setRomaneioMkp(null);
+                  }}
+                  className="rounded-lg border border-border-soft bg-surface px-3.5 py-1.5 text-xs font-medium text-text-muted transition hover:bg-elevated hover:text-text"
+                >
+                  Voltar
+                </button>
+                <button
+                  type="button"
+                  onClick={imprimirRomaneio}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-border-soft bg-elevated px-3.5 py-1.5 font-display text-xs font-semibold text-text shadow transition hover:bg-surface hover:text-white"
+                >
+                  <Printer size={13} />
+                  Imprimir Romaneio
+                </button>
+                <button
+                  type="button"
+                  disabled={pedidosDoRomaneio.length === 0 || confirmandoDespacho}
+                  onClick={() => setConfirmarRomaneioAberto(true)}
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-4 py-1.5 font-display text-xs font-bold text-white shadow transition hover:bg-emerald-500 active:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-30"
+                  title="Confirmar que a transportadora coletou todos os pacotes deste romaneio"
+                >
+                  <Truck size={13} />
+                  Confirmar Despacho ({pedidosDoRomaneio.length})
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Confirmação de Despacho do Romaneio */}
+      {confirmarRomaneioAberto && romaneioMkp && (
+        <div className="despacho-nao-imprimir fixed inset-0 z-60 flex items-center justify-center bg-black/80 p-4 backdrop-blur-xs">
+          <div className="flex w-full max-w-md flex-col overflow-hidden rounded-2xl border border-emerald-500/30 bg-surface shadow-2xl shadow-black/80">
+            <div className="flex items-center gap-3 border-b border-border-soft bg-emerald-500/10 px-5 py-3.5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-emerald-500/40 bg-emerald-500/20 text-emerald-400">
+                <Truck size={20} />
+              </div>
+              <div>
+                <h4 className="font-display text-sm font-bold text-white">
+                  Confirmar Coleta da Transportadora
+                </h4>
+                <p className="text-[11px] text-text-faint">
+                  {MARKETPLACES[romaneioMkp].nome} — {MARKETPLACES[romaneioMkp].nomeTransportadora}
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-3 p-5 text-xs">
+              <p className="leading-relaxed text-text-muted">
+                A transportadora coletou todos os{" "}
+                <strong className="font-mono font-bold text-emerald-400">
+                  {pedidosDoRomaneio.length} {pedidosDoRomaneio.length === 1 ? "pacote" : "pacotes"}
+                </strong>{" "}
+                deste romaneio?
+              </p>
+              <div className="space-y-1 rounded-xl border border-border-soft bg-elevated/40 p-3 text-[11px] text-text-faint">
+                <p>
+                  ✓ O status de todos esses pedidos será alterado para <strong className="font-semibold text-cyan">Enviado</strong>.
+                </p>
+                <p>
+                  ✓ Eles serão removidos da fila da prateleira e somados aos enviados do dia.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 border-t border-border-soft bg-elevated/60 px-5 py-3">
               <button
                 type="button"
-                onClick={() => setRomaneioMkp(null)}
-                className="rounded-lg border border-border-soft bg-surface px-3.5 py-1.5 text-xs font-medium text-text-muted transition hover:bg-elevated hover:text-text"
+                disabled={confirmandoDespacho}
+                onClick={() => setConfirmarRomaneioAberto(false)}
+                className="rounded-lg border border-border-soft bg-surface px-3.5 py-1.5 text-xs font-medium text-text-muted transition hover:bg-elevated hover:text-text disabled:opacity-50"
               >
-                Voltar
+                Cancelar
               </button>
               <button
                 type="button"
-                onClick={imprimirRomaneio}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-amber px-4 py-1.5 font-display text-xs font-bold text-void shadow transition hover:brightness-110 active:brightness-95"
+                disabled={confirmandoDespacho}
+                onClick={confirmarDespachoRomaneio}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-4 py-1.5 font-display text-xs font-bold text-white shadow transition hover:bg-emerald-500 active:bg-emerald-700 disabled:opacity-50"
               >
-                <Printer size={13} />
-                Imprimir Romaneio
+                {confirmandoDespacho ? (
+                  <>
+                    <Loader2 size={13} className="animate-spin" />
+                    Confirmando...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 size={13} />
+                    Sim, Confirmar Despacho
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL DE BLOQUEIO IMPEDITIVO DA BIPAGEM (TRAVA UNIVERSAL)                */}
+      {/* ========================================================================= */}
+      {bloqueioAtivo && (
+        <div className="despacho-nao-imprimir fixed inset-0 z-70 flex items-center justify-center bg-black/85 p-4 backdrop-blur-md">
+          <div
+            className={`flex w-full max-w-lg flex-col overflow-hidden rounded-2xl border bg-[#0d1117] shadow-2xl shadow-black/90 ${
+              bloqueioAtivo.tipo === "duplicado"
+                ? "border-amber-500/80 shadow-amber-500/20"
+                : bloqueioAtivo.tipo === "outro_mkp"
+                ? "border-purple-500/80 shadow-purple-500/20"
+                : bloqueioAtivo.tipo === "agendado_sem_nf"
+                ? "border-cyan-500/80 shadow-cyan-500/20"
+                : "border-red-500/80 shadow-red-500/25"
+            }`}
+          >
+            {/* Topo do Modal */}
+            <div
+              className={`flex items-center gap-3.5 border-b px-5 py-4 ${
+                bloqueioAtivo.tipo === "duplicado"
+                  ? "border-amber-500/30 bg-amber-500/15 text-amber-300"
+                  : bloqueioAtivo.tipo === "outro_mkp"
+                  ? "border-purple-500/30 bg-purple-500/15 text-purple-300"
+                  : bloqueioAtivo.tipo === "agendado_sem_nf"
+                  ? "border-cyan-500/30 bg-cyan-500/15 text-cyan-300"
+                  : "border-red-500/30 bg-red-500/20 text-red-300"
+              }`}
+            >
+              <div
+                className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border ${
+                  bloqueioAtivo.tipo === "duplicado"
+                    ? "border-amber-500/50 bg-amber-500/20 text-amber-400"
+                    : bloqueioAtivo.tipo === "outro_mkp"
+                    ? "border-purple-500/50 bg-purple-500/20 text-purple-300"
+                    : bloqueioAtivo.tipo === "agendado_sem_nf"
+                    ? "border-cyan-500/50 bg-cyan-500/20 text-cyan-300"
+                    : "border-red-500/50 bg-red-500/30 text-red-400"
+                }`}
+              >
+                {bloqueioAtivo.tipo === "duplicado" ? (
+                  <AlertTriangle size={26} />
+                ) : bloqueioAtivo.tipo === "outro_mkp" ? (
+                  <Truck size={26} />
+                ) : bloqueioAtivo.tipo === "agendado_sem_nf" ? (
+                  <FileSpreadsheet size={26} />
+                ) : (
+                  <XCircle size={26} />
+                )}
+              </div>
+              <div className="min-w-0">
+                <span className="inline-block font-mono text-[10px] font-bold uppercase tracking-wider opacity-80">
+                  TRAVA DE SEGURANÇA — EXPEDIÇÃO
+                </span>
+                <h3 className="font-display text-base font-extrabold leading-tight text-white">
+                  {bloqueioAtivo.titulo}
+                </h3>
+              </div>
+            </div>
+
+            {/* Conteúdo */}
+            <div className="space-y-4 p-5 text-xs">
+              <p className="text-sm font-medium leading-relaxed text-white/90">
+                {bloqueioAtivo.mensagem}
+              </p>
+
+              {/* Box de Orientação Operacional Destacada */}
+              <div
+                className={`rounded-xl border p-3.5 text-xs font-semibold leading-relaxed ${
+                  bloqueioAtivo.tipo === "duplicado"
+                    ? "border-amber-500/40 bg-amber-500/10 text-amber-200"
+                    : bloqueioAtivo.tipo === "outro_mkp"
+                    ? "border-purple-500/40 bg-purple-500/10 text-purple-200"
+                    : bloqueioAtivo.tipo === "agendado_sem_nf"
+                    ? "border-cyan-500/40 bg-cyan-500/10 text-cyan-200"
+                    : "border-red-500/40 bg-red-500/15 text-red-200"
+                }`}
+              >
+                {bloqueioAtivo.orientacao}
+              </div>
+
+              {/* Informações detalhadas do pacote lido */}
+              <div className="space-y-1.5 rounded-xl border border-white/[.08] bg-white/[.03] p-3 font-mono text-[11px] text-white/70">
+                {bloqueioAtivo.codigoLido && (
+                  <div className="flex justify-between gap-2">
+                    <span className="text-white/40">Código / Chave lida:</span>
+                    <strong className="break-all text-white select-all">{bloqueioAtivo.codigoLido}</strong>
+                  </div>
+                )}
+                {bloqueioAtivo.pedido && (
+                  <>
+                    <div className="flex justify-between gap-2">
+                      <span className="text-white/40">Pedido:</span>
+                      <strong className="text-white">{bloqueioAtivo.pedido.pedido}</strong>
+                    </div>
+                    <div className="flex justify-between gap-2">
+                      <span className="text-white/40">NF Venda:</span>
+                      <strong className="text-white">{bloqueioAtivo.pedido.nf}</strong>
+                    </div>
+                    <div className="flex justify-between gap-2">
+                      <span className="text-white/40">Cliente:</span>
+                      <strong className="max-w-[220px] truncate text-white">{bloqueioAtivo.pedido.cliente}</strong>
+                    </div>
+                    {bloqueioAtivo.pedido.horarioDespacho && (
+                      <div className="flex justify-between gap-2 border-t border-white/[.06] pt-1.5 text-amber-300">
+                        <span>Bipado anteriormente às:</span>
+                        <strong>{bloqueioAtivo.pedido.horarioDespacho} por {bloqueioAtivo.pedido.operadorDespacho || "operador"}</strong>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Rodapé com botão gigante de liberação */}
+            <div className="border-t border-white/[.08] bg-white/[.02] p-4">
+              <button
+                type="button"
+                autoFocus
+                onClick={fecharBloqueio}
+                className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-white font-display text-sm font-bold text-black shadow-lg transition hover:bg-neutral-200 active:bg-neutral-300"
+              >
+                <CheckCircle2 size={18} />
+                ENTENDIDO — LIBERAR LEITOR (Enter ou Espaço)
               </button>
             </div>
           </div>
