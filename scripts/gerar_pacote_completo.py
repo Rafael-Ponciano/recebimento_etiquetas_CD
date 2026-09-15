@@ -23,6 +23,8 @@ OUT_DIR = ROOT / "releases"
 
 # Empacota a chave SA no ZIP (necessária pro BigQuery). Nunca empacota config.ini.
 SKIP_NAMES = {"config.ini", "credenciais.json"}
+# Pastas que nunca entram no ZIP (cache WebView2, dados de dev, etc.)
+SKIP_DIRS = {"_webview_data"}
 
 
 def _version() -> str:
@@ -49,6 +51,9 @@ def compactar(zip_path: Path) -> int:
             if not path.is_file():
                 continue
             if path.name.lower() in SKIP_NAMES:
+                continue
+            # Ignora pastas de cache/runtime que não devem ir no pacote
+            if any(part in SKIP_DIRS for part in path.parts):
                 continue
             rel = path.relative_to(SRC).as_posix()
             zf.write(path, arcname=rel)
