@@ -298,10 +298,13 @@ export default function DespachoDemoPage() {
     if (despachosData?.items) {
       for (const item of despachosData.items) {
         if (!item.pedido_id || pedidosComEventoProcessado.has(item.pedido_id)) continue;
-        // Só marca como processado ao encontrar o DESPACHO ativo (lista vem desc por id,
-        // então o primeiro DESPACHO encontrado é o mais recente e válido).
-        // DESPACHO_ESTORNO e DESPACHO_COLETADO não bloqueiam — deixa continuar buscando o DESPACHO.
-        if (item.tipo_acao === "DESPACHO") {
+        // Lista vem desc por id — o primeiro evento encontrado por pedido é o mais recente.
+        // DESPACHO_ESTORNO ou DESPACHO_COLETADO como primeiro evento = pedido não está mais
+        // na prateleira; marca como processado SEM entrar no mapa (bloqueia DESPACHO anterior).
+        // DESPACHO como primeiro evento = pedido ativo na prateleira; entra no mapa.
+        if (item.tipo_acao === "DESPACHO_ESTORNO" || item.tipo_acao === "DESPACHO_COLETADO") {
+          pedidosComEventoProcessado.add(item.pedido_id);
+        } else if (item.tipo_acao === "DESPACHO") {
           pedidosComEventoProcessado.add(item.pedido_id);
           let horario = "";
           try {
