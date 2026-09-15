@@ -4,10 +4,11 @@ from __future__ import annotations
 Gera o ZIP completo da release + latest.json (ou latest-teste.json).
 
 Uso:
-  python scripts/gerar_pacote_completo.py
-  python scripts/gerar_pacote_completo.py --teste
+  python scripts/gerar_pacote_completo.py --notes "resumo"
   python scripts/gerar_pacote_completo.py --teste --notes "..."
-  python scripts/gerar_pacote_completo.py --drive-url "https://..."
+
+Após gerar, publicar com:
+  python scripts/publicar_release.py --notes "resumo"
 """
 
 import argparse
@@ -63,7 +64,6 @@ def compactar(zip_path: Path) -> int:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--drive-url", default="", help="Link público do ZIP (Drive ou HTTPS)")
     parser.add_argument(
         "--teste",
         action="store_true",
@@ -79,7 +79,8 @@ def main() -> None:
     if not sa.is_file():
         sa = SRC / "recebimento-sa-key.json"
     if not sa.is_file():
-        print("AVISO: release\\dados\\recebimento-sa-key.json ausente — BQ falhará nos PCs.")
+        print("AVISO: release\\dados\
+ecebimento-sa-key.json ausente — BQ falhará nos PCs.")
 
     version = _version()
     OUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -111,9 +112,8 @@ def main() -> None:
         "file": zip_name,
         "sha256": digest,
         "size_bytes": size,
+        "url": "",  # preenchido por publicar_release.py
     }
-    drive_url = (args.drive_url or "").strip()
-    latest["url"] = drive_url
 
     out_json = OUT_DIR / ("latest-teste.json" if args.teste else "latest.json")
     out_json.write_text(json.dumps(latest, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -124,11 +124,8 @@ def main() -> None:
     print(f"  tamanho:  {size / 1024 / 1024:.2f} MB")
     print(f"  sha256:   {digest}")
     print(f"  json:     {out_json}")
-    if drive_url:
-        print(f"  url:      {drive_url}")
-    else:
-        print("")
-        print("Sem --drive-url: o updater pode baixar via 'file' no bucket, ou preencha url depois.")
+    print()
+    print("Próximo passo: python scripts/publicar_release.py --notes \"...\"")
 
 
 if __name__ == "__main__":
