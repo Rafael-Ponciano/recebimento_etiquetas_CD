@@ -298,8 +298,11 @@ export default function DespachoDemoPage() {
     if (despachosData?.items) {
       for (const item of despachosData.items) {
         if (!item.pedido_id || pedidosComEventoProcessado.has(item.pedido_id)) continue;
-        pedidosComEventoProcessado.add(item.pedido_id);
+        // Só marca como processado ao encontrar o DESPACHO ativo (lista vem desc por id,
+        // então o primeiro DESPACHO encontrado é o mais recente e válido).
+        // DESPACHO_ESTORNO e DESPACHO_COLETADO não bloqueiam — deixa continuar buscando o DESPACHO.
         if (item.tipo_acao === "DESPACHO") {
+          pedidosComEventoProcessado.add(item.pedido_id);
           let horario = "";
           try {
             const d = new Date(item.created_at);
