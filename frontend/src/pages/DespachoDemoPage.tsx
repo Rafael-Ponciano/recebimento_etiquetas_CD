@@ -83,6 +83,7 @@ interface PedidoDespacho {
   status: "Conferido" | "Ag. Embarque" | "Pendente" | "Cancelado";
   tipoColeta: TipoColeta;
   horarioDespacho?: string;
+  timestampDespacho?: string; // ISO completo para ordenação precisa
   operadorDespacho?: string;
 }
 
@@ -272,7 +273,7 @@ export default function DespachoDemoPage() {
 
   // Registros locais de bipagem e estorno para evitar que refetches em segundo plano
   // revertam o estado da linha e causem efeito de "piscada" na tabela
-  const despachadosLocalRef = useRef<Map<string, { horario: string; operador: string }>>(new Map());
+  const despachadosLocalRef = useRef<Map<string, { horario: string; timestamp: string; operador: string }>>(new Map());
   const estornadosLocalRef = useRef<Set<string>>(new Set());
 
   // Foco permanente no input de bipagem sempre que estiver dentro de uma transportadora (se nenhum modal estiver aberto)
@@ -292,7 +293,7 @@ export default function DespachoDemoPage() {
   useEffect(() => {
     if (!pedidosData) return;
 
-    const despachosMap = new Map<string, { horario: string; operador: string }>();
+    const despachosMap = new Map<string, { horario: string; timestamp: string; operador: string }>();
     const pedidosComEventoProcessado = new Set<string>();
     if (despachosData?.items) {
       for (const item of despachosData.items) {
@@ -308,6 +309,7 @@ export default function DespachoDemoPage() {
           }
           despachosMap.set(item.pedido_id, {
             horario,
+            timestamp: item.created_at || "",
             operador: item.usuario || "Operador",
           });
         }
@@ -378,6 +380,7 @@ export default function DespachoDemoPage() {
         status,
         tipoColeta,
         horarioDespacho: infoDespacho?.horario,
+        timestampDespacho: infoDespacho?.timestamp,
         operadorDespacho: infoDespacho?.operador,
       });
     }
@@ -385,7 +388,7 @@ export default function DespachoDemoPage() {
     setPedidos([...convertidos.values()]);
   }, [pedidosData, despachosData]);
 
-  // Métricas consolidadas de expedição por Marketplace
+  // Métricas consolidadas de expedição por Marketplace, já ordenadas por horário de bip decrescente
   const metricasPorMkp = useMemo(() => {
     const ids: MarketplaceId[] = ["meli", "shopee", "magalu", "total_express"];
     const resultado: Record<
@@ -448,6 +451,21 @@ export default function DespachoDemoPage() {
       };
     });
 
+    // Ordena os pedidos já bipados por horário de despacho decrescente (mais recente primeiro)
+    for (const id of ids) {
+      resultado[id] = {
+        ...resultado[id],
+        pedidosBipados: [...resultado[id].pedidosBipados].sort((a, b) => {
+          // Usa o timestamp ISO completo para ordenação precisa (mais recente primeiro)
+          const ta = a.timestampDespacho || a.horarioDespacho || "";
+          const tb = b.timestampDespacho || b.horarioDespacho || "";
+          if (ta === tb) return 0;
+          if (!ta) return 1;
+          if (!tb) return -1;
+          return tb.localeCompare(ta);
+        }),
+      };
+    }
     return resultado;
   }, [pedidos, pedidosData]);
 
@@ -622,10 +640,11 @@ export default function DespachoDemoPage() {
         nf_venda: pedidoEncontrado.nf,
       });
 
+      const agoraIso = new Date().toISOString();
       const agora = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
       const opNome = user?.nome || user?.usuario || "Operador";
 
-      despachadosLocalRef.current.set(pedidoEncontrado.id, { horario: agora, operador: opNome });
+      despachadosLocalRef.current.set(pedidoEncontrado.id, { horario: agora, timestamp: agoraIso, operador: opNome });
       estornadosLocalRef.current.delete(pedidoEncontrado.id);
 
       setPedidos((prev) =>
@@ -635,6 +654,7 @@ export default function DespachoDemoPage() {
                 ...p,
                 status: "Ag. Embarque",
                 horarioDespacho: agora,
+                timestampDespacho: agoraIso,
                 operadorDespacho: opNome,
               }
             : p
@@ -692,6 +712,7 @@ export default function DespachoDemoPage() {
               ...p,
               status: "Conferido",
               horarioDespacho: undefined,
+              timestampDespacho: undefined,
               operadorDespacho: undefined,
             }
           : p
@@ -718,6 +739,7 @@ export default function DespachoDemoPage() {
       estornadosLocalRef.current.delete(pedidoId);
       despachadosLocalRef.current.set(pedidoId, {
         horario: pedido.horarioDespacho || "—",
+        timestamp: pedido.timestampDespacho || "",
         operador: pedido.operadorDespacho || "Operador",
       });
       setPedidos((prev) =>
