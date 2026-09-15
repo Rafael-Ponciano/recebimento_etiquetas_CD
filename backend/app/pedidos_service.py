@@ -1978,6 +1978,8 @@ def _status_manter_apos_falha(order_id: str) -> str:
         "",
         _status_parcial().casefold(),
         "recebido parcial",
+        "em separação",
+        "a conferir",
     }
     if st_cf in placeholders_pos_recebimento:
         return _status_recebido_pendente()
