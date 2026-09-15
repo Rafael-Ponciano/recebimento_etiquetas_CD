@@ -343,14 +343,26 @@ export default function DespachoDemoPage() {
       const foiDespachadoLocal = despachadosLocalRef.current.get(idStr);
       const foiEstornadoLocal = estornadosLocalRef.current.has(idStr);
 
+      // Se marcamos localmente como despachado mas o backend não confirma
+      // (não está no despachosMap e Status Any não é Ag. Coleta), o despacho
+      // não persistiu — descarta o registro local e confia no backend.
+      const backendConfirmaDespachado =
+        stAnyNormalizado === "ag. coleta" ||
+        stAnyNormalizado === "ag. coleta cd" ||
+        despachosMap.has(idStr);
+      if (foiDespachadoLocal && !backendConfirmaDespachado) {
+        despachadosLocalRef.current.delete(idStr);
+      }
+      const despachadoConfirmado = foiDespachadoLocal && backendConfirmaDespachado;
+
       let status: "Conferido" | "Ag. Embarque" | "Pendente" | "Cancelado" = "Pendente";
       if (ehStatusCancelado(stAny)) {
         status = "Cancelado";
-      } else if (foiDespachadoLocal) {
+      } else if (despachadoConfirmado) {
         status = "Ag. Embarque";
       } else if (foiEstornadoLocal) {
         status = ["conferido", "recebido", "feito"].includes(stAnyNormalizado) ? "Conferido" : "Pendente";
-      } else if (stAnyNormalizado === "ag. coleta" || stAnyNormalizado === "ag. coleta cd" || despachosMap.has(idStr)) {
+      } else if (backendConfirmaDespachado) {
         status = "Ag. Embarque";
       } else if (["conferido", "recebido", "feito"].includes(stAnyNormalizado)) {
         status = "Conferido";
