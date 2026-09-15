@@ -1,11 +1,11 @@
 {
-  "version": "2.0.4",
+  "version": "2.0.6",
   "min_version": "1.0.0",
   "mandatory": false,
-  "released_at": "2026-09-15T08:34:24-0300",
-  "notes": "Substitui window.confirm por modais temáticos (ConferirDialog/BaixaManual/despacho); desfazer conferência com modal seguro; confirmação de romaneio com status Enviado, trava de bipagem e histórico de romaneios; otimização da expedição, correção do saldo de itens e ajuste no romaneio; reload automático do backend no iniciar_dev por padrão; implementação do módulo de despacho com testes automatizados.",
-  "file": "ConferenciaPedidos-2.0.4.zip",
-  "sha256": "b53873aa55d4f8caac721a4c04b3526c66bc2a843dbfdfaee9872e07e283ed6d",
-  "size_bytes": 106137297,
-  "url": "https://drive.google.com/uc?export=download&id=1Bz6ITkw2NDgJ8qRKtgm7_FiQmllREo8r"
+  "released_at": "2026-09-15T13:50:28-0300",
+  "notes": "Correcoes: ordenacao Ag. Embarque mais recente primeiro; botao Concluir finalizacao sempre visivel para Recebido - Pendencia Any; status Em separacao e A conferir agora gravam Recebido - Pendencia Any corretamente ao falhar finalizacao",
+  "file": "ConferenciaPedidos-2.0.6.zip",
+  "sha256": "6aa62bb5720b12489d1deaaab2094e279ffaebfcf8268769867334fd8e6fdc83",
+  "size_bytes": 106136945,
+  "url": "https://github.com/Rafael-Ponciano/recebimento_etiquetas_CD/releases/download/v2.0.6/ConferenciaPedidos-2.0.6.zip"
 }
