@@ -476,14 +476,18 @@ export default function ConferirDialog({
       !liberarHojeEraAgendado &&
       !podeLiberarRecebidoHoje &&
       todosItensFeitos);
+  // "Recebido - Pendência Any" = itens 100% recebidos mas finalização falhou;
+  // não depende de todosItensFeitos (pode não ter carregado ainda) — sempre mostra o botão.
   const precisaFinalizar =
     !cancelado &&
-    ((liberarHojeEraAgendado || podeLiberarRecebidoHoje) && todosItensFeitos
+    (statusAny === "Recebido - Pendência Any"
+      ? true
+      : (liberarHojeEraAgendado || podeLiberarRecebidoHoje) && todosItensFeitos
       ? true
       : !soConsulta &&
         todosItensFeitos &&
         (
-          ["A conferir", "FINALIZANDO", "Em separação", "Recebido - Pendência Any"].includes(statusAny) ||
+          ["A conferir", "FINALIZANDO", "Em separação"].includes(statusAny) ||
           ehStatusParcial(statusAny, regras)
         ));
 
