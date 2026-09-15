@@ -483,7 +483,7 @@ export default function ConferirDialog({
       : !soConsulta &&
         todosItensFeitos &&
         (
-          ["A conferir", "FINALIZANDO", "Em separação"].includes(statusAny) ||
+          ["A conferir", "FINALIZANDO", "Em separação", "Recebido - Pendência Any"].includes(statusAny) ||
           ehStatusParcial(statusAny, regras)
         ));
 
@@ -493,6 +493,7 @@ export default function ConferirDialog({
       ehStatusParcial(statusAny, regras) ||
       statusAny === "AG AJUSTE" ||
       statusAny === "FALTANDO ITEM" ||
+      statusAny === "Recebido - Pendência Any" ||
       (statusAny === "A conferir" && temSaldoConferido));
 
   const totalProdutos = itens?.length ?? 0;
