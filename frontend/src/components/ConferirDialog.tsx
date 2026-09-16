@@ -46,6 +46,7 @@ type Props = {
   pedido: Pedido;
   eAgendado: boolean;
   usuarioLogado: string;
+  usuarioLogin?: string; // login técnico (ex: "rafael.silva") para verificações de permissão
   ehAdmin?: boolean;
   forcarConferenciaPadrao?: boolean;
   onClose: () => void;
@@ -372,6 +373,7 @@ export default function ConferirDialog({
   pedido,
   eAgendado,
   usuarioLogado,
+  usuarioLogin = "",
   ehAdmin = false,
   forcarConferenciaPadrao = false,
   onClose,
@@ -505,7 +507,7 @@ export default function ConferirDialog({
 
   // Disponível só para rafael.silva — marca Enviado diretamente sem passar pelo romaneio
   const podeMarcarEnviado =
-    usuarioLogado === "rafael.silva" &&
+    usuarioLogin === "rafael.silva" &&
     !cancelado &&
     statusAny !== "Enviado" &&
     statusAny !== "";

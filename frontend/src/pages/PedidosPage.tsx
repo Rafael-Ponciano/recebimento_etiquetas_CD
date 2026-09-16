@@ -1730,6 +1730,7 @@ export default function PedidosPage() {
               nfPedidoPreenchida(dialogPedido))
           }
           usuarioLogado={user?.nome || user?.usuario || "operador"}
+          usuarioLogin={user?.usuario || ""}
           ehAdmin={user?.role === "admin"}
           onClose={() => setDialogPedido(null)}
           onNotificar={setToast}
