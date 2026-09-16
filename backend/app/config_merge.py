@@ -33,7 +33,9 @@ FORCE_ALLOW_EMPTY = frozenset({"UPDATE_LATEST_URL"})
 
 _PLACEHOLDER_MARKERS = (
     "seu-projeto",
+    "sua-service",
     "sua_service",
+    "sua-",
     "sua_",
     "your_",
     "changeme",
