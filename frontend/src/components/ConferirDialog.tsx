@@ -13,6 +13,7 @@ import {
   Printer,
   Undo2,
   Users,
+  PackageCheck,
 } from "lucide-react";
 import { api } from "../lib/api";
 import {
@@ -428,6 +429,8 @@ export default function ConferirDialog({
   const [confirmarDesmarcarAberto, setConfirmarDesmarcarAberto] = useState(false);
   const executarDesmarcarConferenciaRef = useRef<() => Promise<void>>(() => Promise.resolve());
   const [retomando, setRetomando] = useState(false);
+  const [marcandoEnviado, setMarcandoEnviado] = useState(false);
+  const [confirmarEnviadoAberto, setConfirmarEnviadoAberto] = useState(false);
   const [statusAny, setStatusAny] = useState(pedido["Status Any"] || "");
   const [timeline, setTimeline] = useState<{
     lineKey: string;
@@ -499,6 +502,13 @@ export default function ConferirDialog({
       statusAny === "FALTANDO ITEM" ||
       statusAny === "Recebido - Pendência Any" ||
       (statusAny === "A conferir" && temSaldoConferido));
+
+  // Disponível só para rafael.silva — marca Enviado diretamente sem passar pelo romaneio
+  const podeMarcarEnviado =
+    usuarioLogado === "rafael.silva" &&
+    !cancelado &&
+    statusAny !== "Enviado" &&
+    statusAny !== "";
 
   const totalProdutos = itens?.length ?? 0;
   const totalUnidades = useMemo(
@@ -700,6 +710,25 @@ export default function ConferirDialog({
       onNotificar?.({ tipo: "error", mensagem });
     } finally {
       setRetomando(false);
+    }
+  };
+
+  const executarMarcarEnviado = async () => {
+    if (!podeMarcarEnviado || marcandoEnviado) return;
+    setMarcandoEnviado(true);
+    setConfirmarEnviadoAberto(false);
+    setResultado(null);
+    try {
+      await api.post(`/pedidos/${pedido.id_any}/marcar-enviado`);
+      setStatusAny("Enviado");
+      onConfirmado({ refresh: true });
+      onNotificar?.({ tipo: "success", mensagem: `Pedido ${pedido.Pedido || pedido.id_any} marcado como Enviado.` });
+      onClose();
+    } catch (e: any) {
+      const mensagem = e?.response?.data?.detail ?? "Erro ao marcar como Enviado.";
+      setResultado({ tipo: "error", mensagem });
+    } finally {
+      setMarcandoEnviado(false);
     }
   };
 
@@ -1413,7 +1442,8 @@ export default function ConferirDialog({
         {(
           ((soConsulta || statusAny === "AG AJUSTE" || avisoImpressao) && onImprimir) ||
           precisaFinalizar ||
-          podeDesmarcar
+          podeDesmarcar ||
+          podeMarcarEnviado
         ) && (
         <div className="flex shrink-0 flex-wrap items-center gap-1.5 bg-surface px-3.5 pb-2.5 pt-1">
           {(soConsulta || statusAny === "AG AJUSTE" || avisoImpressao) && onImprimir && (
@@ -1464,12 +1494,24 @@ export default function ConferirDialog({
               <button
                 type="button"
                 onClick={() => setConfirmarDesmarcarAberto(true)}
-                disabled={desmarcando || retomando}
+                disabled={desmarcando || retomando || marcandoEnviado}
                 className="inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-elevated/50 px-3 text-xs text-text transition hover:border-text-faint hover:bg-elevated disabled:opacity-50"
                 title="Desmarca os itens na AnyMarket (admin)"
               >
                 {desmarcando ? <Loader2 size={14} className="animate-spin" /> : <Undo2 size={14} />}
                 Desmarcar conferência
+              </button>
+            )}
+            {podeMarcarEnviado && (
+              <button
+                type="button"
+                onClick={() => setConfirmarEnviadoAberto(true)}
+                disabled={desmarcando || retomando || marcandoEnviado}
+                className="inline-flex h-8 items-center gap-1.5 rounded-md border border-green/40 bg-green/10 px-3 text-xs font-medium text-green transition hover:bg-green/20 disabled:opacity-50"
+                title="Marca este pedido como Enviado manualmente"
+              >
+                {marcandoEnviado ? <Loader2 size={14} className="animate-spin" /> : <PackageCheck size={14} />}
+                Enviado
               </button>
             )}
         </div>
@@ -1538,7 +1580,67 @@ export default function ConferirDialog({
             </div>
           </div>
         </div>
-      )}
-    </div>
-  );
-}
+          )}
+
+          {/* Modal de confirmação — Marcar como Enviado */}
+          {confirmarEnviadoAberto && (
+            <div className="fixed inset-0 z-70 flex items-center justify-center bg-black/80 p-4 backdrop-blur-xs">
+              <div className="flex w-full max-w-md flex-col overflow-hidden rounded-2xl border border-green/40 bg-surface shadow-2xl shadow-black/90">
+                <div className="flex items-center gap-3 border-b border-border bg-green/10 px-5 py-3.5">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-green/40 bg-green/20 text-green">
+                    <PackageCheck size={20} />
+                  </div>
+                  <div>
+                    <h4 className="font-display text-sm font-bold text-white">
+                      Marcar como Enviado
+                    </h4>
+                    <p className="font-mono text-[11px] text-green">
+                      Pedido {pedido.Pedido || pedido.id_any}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-3 p-5 text-xs">
+                  <p className="leading-relaxed text-text">
+                    Deseja marcar este pedido como <strong className="text-white">Enviado</strong> manualmente?
+                  </p>
+                  <div className="space-y-2 rounded-xl border border-border bg-elevated/50 p-3.5 text-[11px] text-text-muted">
+                    <div className="flex items-center gap-2">
+                      <span className="h-1.5 w-1.5 rounded-full bg-green shrink-0" />
+                      <span>Grava status <strong className="text-text">Enviado</strong> no Supabase</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="h-1.5 w-1.5 rounded-full bg-green shrink-0" />
+                      <span>Pedido sai da fila de pendentes</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="h-1.5 w-1.5 rounded-full bg-amber shrink-0" />
+                      <span>Não aciona AnyMarket nem imprime etiqueta</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-2 border-t border-border px-5 py-3">
+                  <button
+                    type="button"
+                    onClick={() => setConfirmarEnviadoAberto(false)}
+                    className="rounded-lg border border-border bg-elevated/50 px-4 py-1.5 text-xs text-text-muted transition hover:border-text-faint hover:text-text"
+                  >
+                    Cancelar (Esc)
+                  </button>
+                  <button
+                    type="button"
+                    disabled={marcandoEnviado}
+                    onClick={() => void executarMarcarEnviado()}
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-green px-4 py-1.5 font-display text-xs font-bold text-void shadow transition hover:brightness-110 active:brightness-95 disabled:opacity-50"
+                  >
+                    {marcandoEnviado ? <Loader2 size={13} className="animate-spin" /> : <PackageCheck size={13} />}
+                    Sim, Enviado (Enter)
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+        );
+        }

@@ -458,3 +458,26 @@ def estornar_despacho(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro interno ao estornar despacho: {e}")
 
+
+@router.post("/{order_id}/marcar-enviado")
+def marcar_enviado(
+    order_id: str,
+    user: AuthUser = Depends(get_current_user),
+):
+    """Marca o pedido como Enviado manualmente. Restrito ao usuário rafael.silva."""
+    if user.usuario != "rafael.silva":
+        raise HTTPException(status_code=403, detail="Ação restrita ao usuário rafael.silva.")
+    try:
+        from ..status_manual_service import salvar_status_manual
+        from ..supabase_client import log_evento
+        salvar_status_manual(
+            order_id=order_id,
+            status_any="Enviado",
+            usuario=user.usuario,
+            observacao="Marcado como Enviado manualmente via modal de conferência.",
+        )
+        log_evento(user.usuario, "ENVIADO_MANUAL", "Status alterado para Enviado manualmente.", order_id)
+        return {"ok": True, "status_pedido": "Enviado"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao marcar como Enviado: {e}")
+
