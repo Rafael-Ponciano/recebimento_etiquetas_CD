@@ -1,11 +1,11 @@
 {
-  "version": "2.0.6",
+  "version": "2.1.1",
   "min_version": "1.0.0",
   "mandatory": false,
-  "released_at": "2026-09-15T13:50:28-0300",
-  "notes": "Correcoes: ordenacao Ag. Embarque mais recente primeiro; botao Concluir finalizacao sempre visivel para Recebido - Pendencia Any; status Em separacao e A conferir agora gravam Recebido - Pendencia Any corretamente ao falhar finalizacao",
-  "file": "ConferenciaPedidos-2.0.6.zip",
-  "sha256": "6aa62bb5720b12489d1deaaab2094e279ffaebfcf8268769867334fd8e6fdc83",
-  "size_bytes": 106136945,
-  "url": "https://github.com/Rafael-Ponciano/recebimento_etiquetas_CD/releases/download/v2.0.6/ConferenciaPedidos-2.0.6.zip"
+  "released_at": "2026-09-24T12:24:52-0300",
+  "notes": "Corrige scroll do modal de romaneio: lista de pedidos agora rola corretamente",
+  "file": "ConferenciaPedidos-2.1.1.zip",
+  "sha256": "98c1d65e57adbda55b00e93224c96ccdee04b71746814036ee47ae43bae84842",
+  "size_bytes": 106224612,
+  "url": "https://github.com/Rafael-Ponciano/recebimento_etiquetas_CD/releases/download/v2.1.1/ConferenciaPedidos-2.1.1.zip"
 }
