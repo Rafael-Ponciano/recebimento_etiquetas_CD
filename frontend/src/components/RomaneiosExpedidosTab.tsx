@@ -404,7 +404,7 @@ export default function RomaneiosExpedidosTab() {
                 </div>
               </div>
 
-              <div className="overflow-hidden rounded-xl border border-border bg-[#0e1218]">
+              <div className="overflow-x-auto rounded-xl border border-border bg-[#0e1218]">
                 <table className="w-full border-collapse text-left font-mono text-xs">
                   <thead>
                     <tr className="border-b border-border bg-elevated/70 text-[10px] uppercase tracking-wider text-text-faint">
