@@ -1,11 +1,11 @@
 {
-  "version": "2.1.1",
+  "version": "2.2.0",
   "min_version": "1.0.0",
   "mandatory": false,
-  "released_at": "2026-09-24T12:24:52-0300",
-  "notes": "Corrige scroll do modal de romaneio: lista de pedidos agora rola corretamente",
-  "file": "ConferenciaPedidos-2.1.1.zip",
-  "sha256": "98c1d65e57adbda55b00e93224c96ccdee04b71746814036ee47ae43bae84842",
-  "size_bytes": 106224612,
-  "url": "https://github.com/Rafael-Ponciano/recebimento_etiquetas_CD/releases/download/v2.1.1/ConferenciaPedidos-2.1.1.zip"
+  "released_at": "2026-10-13T13:12:50-0300",
+  "notes": "Nova tela Coleta Meli: grade semanal de corte, janelas de envio e capacidade do Mercado Livre",
+  "file": "ConferenciaPedidos-2.2.0.zip",
+  "sha256": "7000c1f9fbd7694ae3ba9f26cb96b0cfcd7ac71496786a1e7ad2d3145b8a3282",
+  "size_bytes": 106228969,
+  "url": "https://github.com/Rafael-Ponciano/recebimento_etiquetas_CD/releases/download/v2.2.0/ConferenciaPedidos-2.2.0.zip"
 }
