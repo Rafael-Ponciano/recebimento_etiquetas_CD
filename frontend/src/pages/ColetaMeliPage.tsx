@@ -137,11 +137,13 @@ export default function ColetaMeliPage() {
   const resumo = useMemo(() => {
     if (!data) return null;
     let diasAtivos = 0;
+    let totalColetas = 0;
     let capacidadeTotal = 0;
 
     colunasSemana.forEach((c) => {
       if (c.schedule?.work) {
         diasAtivos++;
+        totalColetas += c.schedule.detail?.length || 1;
         capacidadeTotal += c.schedule.capacity?.value ?? 0;
       }
     });
@@ -151,6 +153,7 @@ export default function ColetaMeliPage() {
 
     return {
       diasAtivos,
+      totalColetas,
       capacidadeTotal,
       capacidadeMedia,
       colHoje,
@@ -313,7 +316,7 @@ export default function ColetaMeliPage() {
                 <span className="text-xs text-text-muted">dias na semana</span>
               </div>
               <p className="mt-1 text-[11px] text-text-faint">
-                Terça a Sexta-feira ativos (Seg, Sáb e Dom sem coleta)
+                {resumo.totalColetas} coleta(s) programada(s) no total da semana
               </p>
             </div>
 
