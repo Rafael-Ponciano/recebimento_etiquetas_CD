@@ -6,7 +6,6 @@ import {
   Truck,
   RotateCw,
   AlertTriangle,
-  Info,
   Package,
   Calendar,
   CheckCircle2,
@@ -751,55 +750,6 @@ export default function ColetaMeliPage() {
             </div>
           </div>
         )}
-
-        {/* Informações Complementares / Regras de Corte */}
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          {/* Box de Lógica do Mercado Envios */}
-          <div className="rounded-lg border border-border-soft bg-surface p-4 text-xs">
-            <div className="flex items-center gap-2 font-semibold text-text">
-              <Info size={15} className="text-amber" />
-              <span>Lógica de Coleta e Tempo de Preparo</span>
-            </div>
-            <div className="mt-3 space-y-2 text-text-muted">
-              <p>
-                • <strong>Terça a Quinta-feira:</strong> Horário de corte às <strong>09:00</strong> com tempo de preparo de <strong>05:00</strong>. Todos os pedidos confirmados até as 09:00 ficam liberados para expedição às 14:00, dentro da janela da transportadora (13:00 às 15:00).
-              </p>
-              <p>
-                • <strong>Sexta-feira:</strong> Horário de corte estendido para às <strong>12:00</strong> com tempo de preparo de <strong>01:00</strong>. Pedidos confirmados até o meio-dia ficam liberados para embarque às 13:00.
-              </p>
-              <p>
-                • <strong>Segunda, Sábado e Domingo:</strong> Operação de coleta física desativada pelo Mercado Livre para este contrato.
-              </p>
-            </div>
-          </div>
-
-          {/* Opções de Processamento por Dia */}
-          <div className="rounded-lg border border-border-soft bg-surface p-4 text-xs">
-            <div className="flex items-center gap-2 font-semibold text-text">
-              <CalendarClock size={15} className="text-amber" />
-              <span>Opções de Tempo de Preparo Disponíveis</span>
-            </div>
-            <div className="mt-3 space-y-2 text-text-muted">
-              <p className="text-[11px] text-text-faint">
-                Opções configuráveis registradas na AnyMarket para cada dia útil:
-              </p>
-              <div className="space-y-1.5 pt-1">
-                <div className="flex items-center justify-between border-b border-border-soft pb-1">
-                  <span className="font-medium text-text">Terça a Quinta</span>
-                  <span className="font-mono text-[11px] text-text-muted">
-                    00:30 até 05:00 liberadas (Atual selecionado: <strong className="text-amber">05:00</strong>)
-                  </span>
-                </div>
-                <div className="flex items-center justify-between pt-1">
-                  <span className="font-medium text-text">Sexta-feira</span>
-                  <span className="font-mono text-[11px] text-text-muted">
-                    00:30 e 01:00 liberadas | Acima de 01:00 bloqueadas (Atual: <strong className="text-amber">01:00</strong>)
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );
