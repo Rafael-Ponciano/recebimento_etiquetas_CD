@@ -240,29 +240,57 @@ export default function ColetaMeliPage() {
               </div>
               <div className="mt-2.5">
                 {resumo.colHoje?.schedule?.work ? (
-                  <div>
-                    <div className="flex items-baseline gap-2">
-                      <span className="font-mono text-2xl font-bold tracking-tight text-text">
-                        {resumo.colHoje.schedule.detail?.[0]?.cutoff || "—"}
-                      </span>
-                      <span className="text-xs text-text-muted">Horário de corte</span>
-                    </div>
-                    <div className="mt-1 flex items-center justify-between text-xs text-text-faint">
-                      <span>
-                        Janela:{" "}
-                        <strong className="text-text font-mono font-medium">
-                          {resumo.colHoje.schedule.detail?.[0]?.from} às{" "}
-                          {resumo.colHoje.schedule.detail?.[0]?.to}
-                        </strong>
-                      </span>
-                      <span>
-                        Capacidade:{" "}
-                        <strong className="text-amber font-mono font-bold">
-                          {resumo.colHoje.schedule.capacity?.value}
-                        </strong>
-                      </span>
-                    </div>
-                  </div>
+                  (() => {
+                    const details = resumo.colHoje.schedule.detail || [];
+                    if (details.length > 1) {
+                      return (
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="font-semibold text-amber">{details.length} coletas hoje</span>
+                            <span className="text-text-faint">
+                              Capacidade: <strong className="text-amber font-mono">{resumo.colHoje.schedule.capacity?.value}</strong>
+                            </span>
+                          </div>
+                          {details.map((d, i) => (
+                            <div key={i} className="rounded border border-border-soft bg-elevated/40 p-2 text-xs">
+                              <div className="flex items-center justify-between">
+                                <span className="font-medium text-text">{i + 1}ª Coleta</span>
+                                <span className="font-mono text-amber font-bold">Corte: {d.cutoff || "—"}</span>
+                              </div>
+                              <div className="mt-1 text-[11px] text-text-faint">
+                                Janela: <strong className="text-text font-mono">{d.from} às {d.to}</strong>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      );
+                    }
+                    const d0 = details[0];
+                    return (
+                      <div>
+                        <div className="flex items-baseline gap-2">
+                          <span className="font-mono text-2xl font-bold tracking-tight text-text">
+                            {d0?.cutoff || "—"}
+                          </span>
+                          <span className="text-xs text-text-muted">Horário de corte</span>
+                        </div>
+                        <div className="mt-1 flex items-center justify-between text-xs text-text-faint">
+                          <span>
+                            Janela:{" "}
+                            <strong className="text-text font-mono font-medium">
+                              {d0?.from} às {d0?.to}
+                            </strong>
+                          </span>
+                          <span>
+                            Capacidade:{" "}
+                            <strong className="text-amber font-mono font-bold">
+                              {resumo.colHoje.schedule.capacity?.value}
+                            </strong>
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })()
                 ) : (
                   <div className="flex items-center gap-2 py-1 text-text-faint">
                     <XCircle size={16} />
@@ -387,6 +415,11 @@ export default function ColetaMeliPage() {
                             {ativo ? (
                               <span className="inline-flex items-center gap-1 text-[10px] text-green">
                                 <CheckCircle2 size={11} /> Coleta Ativa
+                                {col.schedule?.detail && col.schedule.detail.length > 1 && (
+                                  <span className="rounded bg-green/20 px-1 py-0.2 text-[9px] font-semibold text-green">
+                                    {col.schedule.detail.length}x
+                                  </span>
+                                )}
                               </span>
                             ) : (
                               <span className="inline-flex items-center gap-1 text-[10px] text-text-faint">
@@ -410,7 +443,7 @@ export default function ColetaMeliPage() {
                       </div>
                     </td>
                     {colunasSemana.map((col) => {
-                      const cutoff = col.schedule?.detail?.[0]?.cutoff;
+                      const details = col.schedule?.detail || [];
                       const ativo = col.schedule?.work;
                       return (
                         <td
@@ -419,10 +452,21 @@ export default function ColetaMeliPage() {
                             col.ehHoje ? "bg-amber/5 font-semibold text-amber" : ""
                           }`}
                         >
-                          {ativo && cutoff ? (
-                            <span className="rounded bg-elevated px-2 py-0.5 text-text font-bold">
-                              {cutoff}
-                            </span>
+                          {ativo && details.length > 0 ? (
+                            <div className="space-y-1">
+                              {details.map((d, idx) => (
+                                <div key={idx} className="flex items-center gap-1.5">
+                                  {details.length > 1 && (
+                                    <span className="font-sans text-[10px] text-text-faint font-medium">
+                                      {idx + 1}ª:
+                                    </span>
+                                  )}
+                                  <span className="rounded bg-elevated px-2 py-0.5 text-text font-bold">
+                                    {d.cutoff || "—"}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
                           ) : (
                             <span className="text-text-faint">—</span>
                           )}
@@ -440,7 +484,7 @@ export default function ColetaMeliPage() {
                       </div>
                     </td>
                     {colunasSemana.map((col) => {
-                      const detail = col.schedule?.detail?.[0];
+                      const details = col.schedule?.detail || [];
                       const ativo = col.schedule?.work;
                       return (
                         <td
@@ -449,11 +493,22 @@ export default function ColetaMeliPage() {
                             col.ehHoje ? "bg-amber/5" : ""
                           }`}
                         >
-                          {ativo && detail?.from && detail?.to ? (
-                            <span className="text-text">
-                              De <strong className="font-semibold">{detail.from}</strong> até{" "}
-                              <strong className="font-semibold">{detail.to}</strong>
-                            </span>
+                          {ativo && details.length > 0 ? (
+                            <div className="space-y-1">
+                              {details.map((d, idx) => (
+                                <div key={idx} className="flex items-center gap-1">
+                                  {details.length > 1 && (
+                                    <span className="font-sans text-[10px] text-text-faint font-medium">
+                                      {idx + 1}ª:
+                                    </span>
+                                  )}
+                                  <span className="text-text">
+                                    De <strong className="font-semibold">{d.from}</strong> até{" "}
+                                    <strong className="font-semibold">{d.to}</strong>
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
                           ) : (
                             <span className="text-text-faint">—</span>
                           )}
@@ -471,7 +526,8 @@ export default function ColetaMeliPage() {
                       </div>
                     </td>
                     {colunasSemana.map((col) => {
-                      const driver = col.schedule?.detail?.[0]?.driver?.name;
+                      const details = col.schedule?.detail || [];
+                      const ativo = col.schedule?.work;
                       return (
                         <td
                           key={col.key}
@@ -479,8 +535,19 @@ export default function ColetaMeliPage() {
                             col.ehHoje ? "bg-amber/5" : ""
                           }`}
                         >
-                          {driver ? (
-                            <span className="text-text">{driver}</span>
+                          {ativo && details.length > 0 ? (
+                            <div className="space-y-1">
+                              {details.map((d, idx) => (
+                                <div key={idx} className="flex items-center gap-1">
+                                  {details.length > 1 && (
+                                    <span className="text-[10px] text-text-faint font-medium">
+                                      {idx + 1}ª:
+                                    </span>
+                                  )}
+                                  <span className="text-text">{d.driver?.name || "—"}</span>
+                                </div>
+                              ))}
+                            </div>
                           ) : (
                             <span className="text-text-faint">—</span>
                           )}
@@ -498,7 +565,8 @@ export default function ColetaMeliPage() {
                       </div>
                     </td>
                     {colunasSemana.map((col) => {
-                      const vehicle = col.schedule?.detail?.[0]?.vehicle?.vehicleType;
+                      const details = col.schedule?.detail || [];
+                      const ativo = col.schedule?.work;
                       return (
                         <td
                           key={col.key}
@@ -506,8 +574,19 @@ export default function ColetaMeliPage() {
                             col.ehHoje ? "bg-amber/5" : ""
                           }`}
                         >
-                          {vehicle ? (
-                            <span className="text-text">{vehicle}</span>
+                          {ativo && details.length > 0 ? (
+                            <div className="space-y-1">
+                              {details.map((d, idx) => (
+                                <div key={idx} className="flex items-center gap-1">
+                                  {details.length > 1 && (
+                                    <span className="text-[10px] text-text-faint font-medium">
+                                      {idx + 1}ª:
+                                    </span>
+                                  )}
+                                  <span className="text-text">{d.vehicle?.vehicleType || "—"}</span>
+                                </div>
+                              ))}
+                            </div>
                           ) : (
                             <span className="text-text-faint">—</span>
                           )}
@@ -525,7 +604,8 @@ export default function ColetaMeliPage() {
                       </div>
                     </td>
                     {colunasSemana.map((col) => {
-                      const plate = col.schedule?.detail?.[0]?.vehicle?.licensePlate;
+                      const details = col.schedule?.detail || [];
+                      const ativo = col.schedule?.work;
                       return (
                         <td
                           key={col.key}
@@ -533,8 +613,19 @@ export default function ColetaMeliPage() {
                             col.ehHoje ? "bg-amber/5" : ""
                           }`}
                         >
-                          {plate ? (
-                            <span className="text-text">{plate}</span>
+                          {ativo && details.length > 0 ? (
+                            <div className="space-y-1">
+                              {details.map((d, idx) => (
+                                <div key={idx} className="flex items-center gap-1">
+                                  {details.length > 1 && (
+                                    <span className="font-sans text-[10px] text-text-faint font-medium">
+                                      {idx + 1}ª:
+                                    </span>
+                                  )}
+                                  <span className="text-text">{d.vehicle?.licensePlate || "—"}</span>
+                                </div>
+                              ))}
+                            </div>
                           ) : (
                             <span className="text-text-faint">—</span>
                           )}
@@ -552,7 +643,8 @@ export default function ColetaMeliPage() {
                       </div>
                     </td>
                     {colunasSemana.map((col) => {
-                      const carrier = col.schedule?.detail?.[0]?.carrier?.name;
+                      const details = col.schedule?.detail || [];
+                      const ativo = col.schedule?.work;
                       return (
                         <td
                           key={col.key}
@@ -560,8 +652,19 @@ export default function ColetaMeliPage() {
                             col.ehHoje ? "bg-amber/5" : ""
                           }`}
                         >
-                          {carrier ? (
-                            <span className="text-text">{carrier}</span>
+                          {ativo && details.length > 0 ? (
+                            <div className="space-y-1">
+                              {details.map((d, idx) => (
+                                <div key={idx} className="flex items-center gap-1">
+                                  {details.length > 1 && (
+                                    <span className="text-[10px] text-text-faint font-medium">
+                                      {idx + 1}ª:
+                                    </span>
+                                  )}
+                                  <span className="text-text">{d.carrier?.name || "—"}</span>
+                                </div>
+                              ))}
+                            </div>
                           ) : (
                             <span className="text-text-faint">—</span>
                           )}
