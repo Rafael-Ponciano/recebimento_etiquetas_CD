@@ -8,6 +8,7 @@ import PerformancePage from "./pages/PerformancePage";
 import BaixaManualPage from "./pages/BaixaManualPage";
 import DashboardPage from "./pages/DashboardPage";
 import DespachoDemoPage from "./pages/DespachoDemoPage";
+import ColetaMeliPage from "./pages/ColetaMeliPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import RequireTela from "./components/RequireTela";
 import { GlobalContextMenu } from "./components/ContextMenu";
@@ -47,6 +48,9 @@ export default function App() {
             </Route>
             <Route element={<RequireTela tela="despacho" />}>
               <Route path="/despacho" element={<DespachoDemoPage />} />
+            </Route>
+            <Route element={<RequireTela tela="coleta-meli" />}>
+              <Route path="/coleta-meli" element={<ColetaMeliPage />} />
             </Route>
           </Route>
         </Routes>

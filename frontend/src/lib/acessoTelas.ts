@@ -4,6 +4,7 @@ export const TELAS = [
   { id: "pedidos", label: "Pedidos", path: "/" },
   { id: "historico", label: "Histórico", path: "/historico" },
   { id: "despacho", label: "Despacho", path: "/despacho" },
+  { id: "coleta-meli", label: "Coleta Meli", path: "/coleta-meli" },
   { id: "dashboard", label: "Dashboard", path: "/dashboard" },
   { id: "logs", label: "Logs", path: "/logs" },
   { id: "performance", label: "Performance", path: "/performance" },
@@ -35,6 +36,6 @@ export function temTela(
   if ((user.usuario || "").toLowerCase() === ADMIN_ACESSO.toLowerCase()) return true;
   if (user.telas?.length) return user.telas.includes(tela);
   // Fallback legado (sessão antiga sem telas)
-  if (tela === "pedidos" || tela === "historico" || tela === "despacho") return true;
+  if (tela === "pedidos" || tela === "historico" || tela === "despacho" || tela === "coleta-meli") return true;
   return false;
 }

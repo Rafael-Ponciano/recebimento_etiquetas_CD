@@ -422,3 +422,34 @@ def garantir_etiqueta_magalu_1_pagina(order_id: str, file_path: str, mkp: str | 
         return reduzir_etiqueta_se_magalu(file_path, mkp_efetivo)
     except Exception as e:
         return False, str(e)
+
+
+def consultar_horarios_coleta_meli(
+    account_id: int = 47155,
+    marketplace: str = "MERCADO_LIVRE",
+    logistic_type: str = "cross_docking",
+    id_stock: int = 7341,
+) -> dict:
+    """Consulta a grade semanal de despacho/coleta no Mercado Livre via AnyMarket."""
+    url = (
+        f"https://app.anymarket.com.br/rest/api/dispatchTime/marketplaces/{marketplace}"
+        f"/account/{account_id}/logisticType/{logistic_type}?idStockInAnymarket={id_stock}"
+    )
+    token_data = get_valid_token()
+    headers = {
+        "gumgaToken": token_data.get("gumga_token", ""),
+        "Accept": "application/json, text/plain, */*",
+    }
+    resp = http_session.get(url, headers=headers, timeout=_request_timeout())
+    if resp.status_code == 401:
+        with _token_lock:
+            token_data = _gerar_novo_token()
+        headers["gumgaToken"] = token_data.get("gumga_token", "")
+        resp = http_session.get(url, headers=headers, timeout=_request_timeout())
+
+    if resp.status_code != 200:
+        raise RuntimeError(
+            f"Erro AnyMarket ao consultar horários de coleta ({resp.status_code}): {resp.text[:300]}"
+        )
+    return resp.json()
+

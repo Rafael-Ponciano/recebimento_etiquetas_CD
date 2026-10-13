@@ -10,6 +10,7 @@ import {
   TriangleAlert,
   Printer,
   Truck,
+  CalendarClock,
 } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -228,6 +229,11 @@ export default function TopBar() {
           {temTela(user, "despacho") && (
             <NavItem to="/despacho" icon={<Truck size={15} />}>
               Despacho
+            </NavItem>
+          )}
+          {temTela(user, "coleta-meli") && (
+            <NavItem to="/coleta-meli" icon={<CalendarClock size={15} />}>
+              Coleta Meli
             </NavItem>
           )}
           {temTela(user, "historico") && (

@@ -21,6 +21,7 @@ TELAS_TODAS: tuple[str, ...] = (
     "pedidos",
     "historico",
     "despacho",
+    "coleta-meli",
     "dashboard",
     "logs",
     "performance",
@@ -31,6 +32,7 @@ TELA_LABELS: dict[str, str] = {
     "pedidos": "Pedidos",
     "historico": "Histórico",
     "despacho": "Despacho",
+    "coleta-meli": "Coleta Meli",
     "dashboard": "Dashboard",
     "logs": "Logs",
     "performance": "Performance",
@@ -38,7 +40,7 @@ TELA_LABELS: dict[str, str] = {
 }
 
 DEFAULTS_POR_ROLE: dict[str, tuple[str, ...]] = {
-    "operador": ("pedidos", "historico", "despacho"),
+    "operador": ("pedidos", "historico", "despacho", "coleta-meli"),
     "admin": TELAS_TODAS,
 }
 

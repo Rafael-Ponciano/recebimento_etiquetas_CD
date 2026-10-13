@@ -1554,6 +1554,52 @@
         }
       }
     },
+    "/api/pedidos/{order_id}/marcar-enviado": {
+      "post": {
+        "tags": [
+          "pedidos"
+        ],
+        "summary": "Marcar Enviado",
+        "description": "Marca o pedido como Enviado manualmente. Restrito ao usuário rafael.silva.",
+        "operationId": "marcar_enviado_api_pedidos__order_id__marcar_enviado_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/preferencias/{tela}": {
       "get": {
         "tags": [
@@ -2422,6 +2468,31 @@
                 "schema": {
                   "$ref": "#/components/schemas/HTTPValidationError"
                 }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/expedicao/coleta-meli": {
+      "get": {
+        "tags": [
+          "expedicao"
+        ],
+        "summary": "Obter Horarios Coleta Meli",
+        "description": "Consulta a grade semanal de despacho e capacidade do Mercado Livre via AnyMarket.",
+        "operationId": "obter_horarios_coleta_meli_api_expedicao_coleta_meli_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
               }
             }
           }

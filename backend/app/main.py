@@ -16,6 +16,7 @@ from .routers import (
     update_router,
     etiqueta_prefetch_router,
     acesso_telas_router,
+    coleta_meli_router,
 )
 from .config import get_external_path
 from .version import get_app_version
@@ -55,6 +56,7 @@ app.include_router(dashboard_router.router)
 app.include_router(update_router.router)
 app.include_router(etiqueta_prefetch_router.router)
 app.include_router(acesso_telas_router.router)
+app.include_router(coleta_meli_router.router)
 
 @app.on_event("startup")
 def _limpar_downloads_ao_iniciar():
